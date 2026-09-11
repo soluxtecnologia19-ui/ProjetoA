@@ -10168,17 +10168,50 @@ if (offersBackButton) {
 
 
 /* ============================================================
-   LOGOUT DESKTOP
+   LOGOUT — PC / TABLET / CELULAR
    ============================================================ */
 
 if (logoutButton) {
 
     logoutButton.addEventListener(
         "click",
-        logout
+        async event => {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            await logout();
+
+        }
     );
+
 }
 
+
+/*
+ * Botão "Sair" que aparece dentro da tela
+ * Minha Conta / Perfil no celular e tablet.
+ */
+const profileLogoutButton =
+    document.getElementById(
+        "profileLogoutButton"
+    );
+
+if (profileLogoutButton) {
+
+    profileLogoutButton.addEventListener(
+        "click",
+        async event => {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            await logout();
+
+        }
+    );
+
+}
 
 /* ============================================================
    HOME / MARCA
