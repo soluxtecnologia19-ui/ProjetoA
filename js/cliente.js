@@ -1956,7 +1956,7 @@ function navigateToCategory(
 
     window.scrollTo({
         top: 0,
-        behavior: "smooth"
+        behavior: "auto"
     });
 }
 
@@ -4880,6 +4880,20 @@ function updateCartSummary() {
     if (cartCount) {
         cartCount.textContent =
             String(quantity);
+    }
+
+    /* Barra inferior: mantém o mesmo contador do carrinho do PC. */
+    const bottomCartCount =
+        document.getElementById("bottomCartCount");
+
+    if (bottomCartCount) {
+        bottomCartCount.textContent =
+            String(quantity);
+        bottomCartCount.setAttribute(
+            "aria-label",
+            `Itens no carrinho: ${quantity}`
+        );
+        bottomCartCount.hidden = false;
     }
 
     if (cartSubtotal) {
@@ -7874,6 +7888,37 @@ async function deleteAccount() {
    NAVEGAÇÃO ENTRE SEÇÕES
    ============================================================ */
 
+function pushClientSectionHistory(section) {
+    const value = String(section || "").trim();
+    if (!value) return;
+
+    try {
+        const current = window.history.state || {};
+
+        if (current.casafortSection === value) {
+            return;
+        }
+
+        const url = new URL(window.location.href);
+        url.hash = value === "offers" ? "ofertas" : "";
+
+        window.history.pushState(
+            {
+                ...current,
+                casafortSection: value,
+                casafortOffers: value === "offers"
+            },
+            "",
+            `${url.pathname}${url.search}${url.hash}`
+        );
+    } catch (error) {
+        console.warn(
+            "Não foi possível registrar a navegação da seção.",
+            error
+        );
+    }
+}
+
 
 /**
  * Esconde todos os painéis.
@@ -7965,7 +8010,8 @@ function showOffers(pushHistory = true) {
             window.history.pushState(
                 {
                     ...(window.history.state || {}),
-                    casafortOffers: true
+                    casafortOffers: true,
+                    casafortSection: "offers"
                 },
                 "",
                 `${url.pathname}${url.search}${url.hash}`
@@ -7988,7 +8034,9 @@ function showOffers(pushHistory = true) {
 /**
  * Mostra favoritos.
  */
-function showFavorites() {
+function showFavorites(pushHistory = true) {
+
+    if (pushHistory) pushClientSectionHistory("favorites");
 
     hideAllSections();
     setBottomNavigationActive("favorites");
@@ -8022,7 +8070,9 @@ function showFavorites() {
 /**
  * Mostra perfil.
  */
-function showProfile() {
+function showProfile(pushHistory = true) {
+
+    if (pushHistory) pushClientSectionHistory("profile");
 
     hideAllSections();
     setBottomNavigationActive("account");
@@ -8056,7 +8106,9 @@ function showProfile() {
 /**
  * Mostra pedidos.
  */
-async function showOrders() {
+async function showOrders(pushHistory = true) {
+
+    if (pushHistory) pushClientSectionHistory("orders");
 
     hideAllSections();
     setBottomNavigationActive("orders");
@@ -8205,6 +8257,7 @@ function goToHomeStore() {
             {
                 ...(window.history.state || {}),
                 casafortOffers: false,
+                casafortSection: null,
                 casafortProduct: null
             },
             "",
@@ -9058,6 +9111,46 @@ window.addEventListener(
                 openProductDetails(productId);
             }
         }
+    }
+);
+
+/*
+ * Botão Voltar nativo do Android/iPhone/iPad e botão Voltar
+ * do navegador: qualquer painel secundário retorna para Início.
+ */
+window.addEventListener(
+    "popstate",
+    event => {
+        if (productModal && !productModal.hidden) return;
+        if (cartDrawer && !cartDrawer.hidden) return;
+
+        const section = event.state?.casafortSection || "";
+
+        if (section === "favorites") {
+            showFavorites(false);
+            return;
+        }
+
+        if (section === "profile") {
+            showProfile(false);
+            return;
+        }
+
+        if (section === "orders") {
+            showOrders(false);
+            return;
+        }
+
+        if (
+            event.state?.casafortOffers ||
+            window.location.hash === "#ofertas"
+        ) {
+            showOffers(false);
+            return;
+        }
+
+        /* Sem seção: página inicial. */
+        goToHomeStore();
     }
 );
 
