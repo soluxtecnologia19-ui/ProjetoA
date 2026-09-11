@@ -12015,32 +12015,43 @@ body {
     }
 }
 /* ============================================================
-   CORREÇÃO — BOTÃO OFERTAS ATRÁS DA PESQUISA
+   CORREÇÃO DEFINITIVA — OFERTAS
    ============================================================ */
 
-@media (min-width: 1101px) {
+/*
+ * O botão #offersButton é o botão antigo do cabeçalho.
+ *
+ * Ele NÃO deve aparecer solto atrás/embaixo da pesquisa
+ * nem junto do menu hambúrguer.
+ *
+ * A opção "Ofertas" do menu hambúrguer é outro elemento:
+ * #mobileOffersButton
+ *
+ * Portanto escondemos somente o botão antigo.
+ */
 
-    .shop-header-inner {
-        position: relative !important;
-    }
+#offersButton {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
 
-    .shop-search {
-        position: relative !important;
-        z-index: 20 !important;
-    }
 
-    .shop-nav {
-        position: relative !important;
-        z-index: 30 !important;
-    }
+/* ============================================================
+   MENU HAMBÚRGUER FECHADO
+   ============================================================ */
 
-    #offersButton {
-        position: relative !important;
-        z-index: 31 !important;
-        display: inline-flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
+/*
+ * Quando o menu estiver fechado, nada do conteúdo interno,
+ * inclusive "Ofertas", pode ficar aparecendo.
+ */
+
+#mobileMenuDropdown[hidden] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 </style>
 
@@ -12060,11 +12071,22 @@ body {
 
             <!-- MARCA -->
 
-            <a
+          <!-- =========================================================
+     LOGO CASA FORT
+     CLIQUE NA LOGO = VOLTAR PARA O INÍCIO
+     PC / CELULAR / TABLET
+     ========================================================= -->
+
+<a
     href="./cliente.html"
     id="brandHome"
     class="shop-brand"
-    aria-label="Ir para a vitrine"
+    aria-label="Voltar para o início da CasaFort"
+    onclick="
+        event.preventDefault();
+        window.location.href = './cliente.html';
+        return false;
+    "
 >
     <img
         class="shop-brand-logo"
@@ -12072,7 +12094,6 @@ body {
         alt="CasaFort - Tudo para sua obra e sua casa"
     >
 </a>
-
             <!-- PESQUISA -->
 
             <div class="shop-search">
