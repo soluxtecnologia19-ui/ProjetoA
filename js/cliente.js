@@ -4866,6 +4866,33 @@ function getCartItemTotal(
 /**
  * Atualiza contador e total.
  */
+function updateBottomCartCount() {
+
+    const bottomCartCount =
+        document.getElementById("bottomCartCount");
+
+    if (!bottomCartCount) {
+        return;
+    }
+
+    const quantity =
+        getCartQuantity();
+
+    bottomCartCount.textContent =
+        String(quantity);
+
+    bottomCartCount.setAttribute(
+        "aria-label",
+        `Itens no carrinho: ${quantity}`
+    );
+
+    bottomCartCount.hidden = false;
+}
+
+
+/**
+ * Atualiza contador e total.
+ */
 function updateCartSummary() {
 
     const quantity =
@@ -4882,19 +4909,11 @@ function updateCartSummary() {
             String(quantity);
     }
 
-    /* Barra inferior: mantém o mesmo contador do carrinho do PC. */
-    const bottomCartCount =
-        document.getElementById("bottomCartCount");
-
-    if (bottomCartCount) {
-        bottomCartCount.textContent =
-            String(quantity);
-        bottomCartCount.setAttribute(
-            "aria-label",
-            `Itens no carrinho: ${quantity}`
-        );
-        bottomCartCount.hidden = false;
-    }
+    /*
+     * Barra inferior: usa exatamente a mesma quantidade
+     * do carrinho principal.
+     */
+    updateBottomCartCount();
 
     if (cartSubtotal) {
         cartSubtotal.textContent =
@@ -5073,7 +5092,13 @@ async function addToCart(
 
 
     /*
-     * Atualiza imediatamente a interface.
+     * Atualiza imediatamente a contagem da barra inferior.
+     * Não altera o conteúdo do carrinho.
+     */
+    updateBottomCartCount();
+
+    /*
+     * Atualiza imediatamente a interface completa.
      */
     renderCart();
 
@@ -5130,6 +5155,7 @@ async function removeCartItem(
 
 
     renderCart();
+    updateBottomCartCount();
 
     await saveCart();
 }
@@ -5243,6 +5269,7 @@ async function setCartQuantity(
 
 
     renderCart();
+    updateBottomCartCount();
 
     await saveCart();
 }
@@ -5573,6 +5600,7 @@ async function deleteSelectedCartItems() {
 
 
     renderCart();
+    updateBottomCartCount();
 
     await saveCart();
 }
@@ -8214,6 +8242,66 @@ function toggleMobileMenu() {
 
 
 /* ============================================================
+   PROTEÇÃO VISUAL DO MENU MOBILE / TABLET
+   ============================================================ */
+
+/*
+ * O botão "Ofertas" do cabeçalho desktop não deve aparecer
+ * solto no celular/tablet.
+ *
+ * A opção "Ofertas" que pertence ao hambúrguer continua
+ * dentro de #mobileMenuDropdown e só aparece quando o menu
+ * estiver aberto.
+ */
+(function enforceMobileMenuVisibility() {
+
+    if (
+        document.getElementById(
+            "casafortMobileMenuVisibilityFix"
+        )
+    ) {
+        return;
+    }
+
+    const style =
+        document.createElement("style");
+
+    style.id =
+        "casafortMobileMenuVisibilityFix";
+
+    style.textContent = `
+        @media (max-width: 900px) {
+
+            #offersButton {
+                display: none !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+            }
+
+            #mobileMenuDropdown[hidden] {
+                display: none !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+            }
+
+        }
+
+        #mobileMenuDropdown[hidden] {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+    `;
+
+    (
+        document.head ||
+        document.documentElement
+    ).appendChild(style);
+
+})();
+
+
+/* ============================================================
    NAVEGAÇÃO INFERIOR — MOBILE / TABLET
    Os botões do HTML usam data-bottom-action.
 
@@ -10074,26 +10162,17 @@ if (logoutButton) {
    ============================================================ */
 
 /*
- * O logo da CasaFort sempre deve levar para a página inicial
- * real da loja.
+ * O logo da CasaFort volta para a vitrine inicial
+ * SEM recarregar a página.
  *
- * NÃO vamos depender do estado da categoria, histórico,
- * modal ou seção atual.
- *
- * Ao clicar no logo:
- *
- * categoria antiga  -> eliminada
- * ofertas antigas   -> eliminadas
- * produto aberto    -> eliminado
- * hash              -> eliminado
- *
- * A página é carregada novamente em cliente.html.
- *
- * Isso funciona no:
+ * Funciona em:
  * - PC
  * - notebook
  * - tablet
  * - celular
+ *
+ * A função goToHomeStore() limpa a categoria atual,
+ * limpa ofertas e reconstrói a vitrine.
  */
 
 const brandHome =
@@ -10107,8 +10186,8 @@ if (brandHome) {
         event => {
 
             /*
-             * Impede o navegador de seguir o href
-             * antigo antes de executarmos a navegação.
+             * Impede o href="./cliente.html"
+             * de recarregar a página.
              */
             event.preventDefault();
 
@@ -10116,14 +10195,10 @@ if (brandHome) {
 
 
             /*
-             * Caminho REAL da página inicial.
-             *
-             * O navegador vai carregar cliente.html
-             * novamente, eliminando qualquer categoria
-             * que estava na página anterior.
+             * Volta para a vitrine inicial
+             * sem atualizar o navegador.
              */
-            window.location.href =
-                "./cliente.html";
+            goToHomeStore();
 
         },
         false
@@ -10131,6 +10206,24 @@ if (brandHome) {
 
 }
 
+
+/* ============================================================
+   ATUALIZA BOTÃO INÍCIO
+   ============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        setBottomNavigationActive(
+            storeSection &&
+            !storeSection.hidden
+                ? "store"
+                : ""
+        );
+
+    }
+);
 
 /*
  * ============================================================
