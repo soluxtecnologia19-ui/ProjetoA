@@ -6722,12 +6722,7 @@ img {
     z-index: 12000 !important;
 }
 
-/* Esconde os botões antigos "Voltar para a vitrine". */
-#backToStoreFromFavorites,
-#backToStoreFromProfile,
-#backToStoreFromOrders {
-    display: none !important;
-}
+/* Os botões "Voltar para a vitrine" permanecem visíveis e funcionais. */
 
 /* ============================================================
    MOBILE — CARRINHO SEM COBRIR O FINALIZAR
@@ -11646,6 +11641,351 @@ body {
     }
 }
 
+</style>
+
+
+<style id="casafort-v3-final-responsive-fix">
+/* ============================================================
+   CASAFORT V3 — CORREÇÃO FINAL RESPONSIVA
+   Header • Logo • Ofertas • Toque • Rolagem • Navegação
+   ============================================================ */
+
+/* A logo nunca deve ser cortada pelo próprio link. */
+.shop-brand,
+.shop-brand-logo {
+    overflow: visible !important;
+}
+.shop-brand-logo {
+    object-fit: contain !important;
+    object-position: center center !important;
+}
+
+/* Os botões de retorno dos painéis ficam realmente visíveis. */
+#backToStoreFromFavorites,
+#backToStoreFromProfile,
+#backToStoreFromOrders {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+}
+
+/* ------------------------------------------------------------
+   PC / NOTEBOOK
+   ------------------------------------------------------------ */
+@media (min-width: 1101px) {
+    .shop-header-inner {
+        height: 100px !important;
+        min-height: 100px !important;
+    }
+
+    .shop-brand {
+        top: 4px !important;
+        height: 58px !important;
+        width: 190px !important;
+        align-items: center !important;
+    }
+
+    .shop-brand-logo {
+        width: 155px !important;
+        max-width: 155px !important;
+        height: 58px !important;
+        max-height: 58px !important;
+    }
+
+    .shop-mobile-wrap {
+        bottom: 4px !important;
+    }
+}
+
+/* ------------------------------------------------------------
+   TABLET + CELULAR
+   Até 1100px usa a navegação inferior.
+   ------------------------------------------------------------ */
+@media (max-width: 1100px) {
+    /* Nunca deixar Ofertas/Favoritos/Conta/Carrinho antigos
+       aparecerem no cabeçalho mobile/tablet. */
+    .shop-nav > #offersButton,
+    .shop-nav > #favoritesButton,
+    .shop-nav > #accountButton,
+    .shop-nav > #cartButton,
+    .shop-nav > #logoutButton {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    .shop-header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 10000 !important;
+        background: #fff !important;
+    }
+
+    .shop-header-inner {
+        width: 100% !important;
+        min-height: 116px !important;
+        height: auto !important;
+        padding: 8px 14px 10px !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        grid-template-rows: 58px 44px !important;
+        gap: 6px 10px !important;
+        align-items: center !important;
+    }
+
+    .shop-mobile-wrap {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        position: relative !important;
+        inset: auto !important;
+        width: max-content !important;
+        height: 58px !important;
+        display: block !important;
+        order: 1 !important;
+        z-index: 20 !important;
+    }
+
+    .shop-menu-button {
+        width: auto !important;
+        min-width: 0 !important;
+        height: 58px !important;
+        min-height: 58px !important;
+        padding: 0 !important;
+        gap: 10px !important;
+        border: 0 !important;
+        border-radius: 8px !important;
+        background: #fff !important;
+        color: #333 !important;
+    }
+
+    .shop-menu-button::after {
+        content: "Departamentos" !important;
+        display: block !important;
+        font-size: 18px !important;
+        line-height: 1 !important;
+        font-weight: 500 !important;
+        color: #333 !important;
+        white-space: nowrap !important;
+    }
+
+    .shop-menu-button-lines {
+        width: 28px !important;
+        gap: 5px !important;
+        flex: 0 0 28px !important;
+    }
+
+    .shop-menu-button-lines span {
+        height: 3px !important;
+        background: #333 !important;
+    }
+
+    .shop-brand {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        position: relative !important;
+        inset: auto !important;
+        width: 132px !important;
+        min-width: 132px !important;
+        height: 58px !important;
+        max-height: 58px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        justify-self: end !important;
+        order: 2 !important;
+        overflow: visible !important;
+        z-index: 30 !important;
+    }
+
+    .shop-brand-logo {
+        display: block !important;
+        width: 132px !important;
+        max-width: 132px !important;
+        height: 58px !important;
+        max-height: 58px !important;
+        min-height: 0 !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+    }
+
+    .shop-search {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+        order: 3 !important;
+        z-index: 10 !important;
+    }
+
+    .shop-search input {
+        width: 100% !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        border-radius: 9px !important;
+    }
+
+    /* O menu dropdown começa abaixo do cabeçalho. */
+    .shop-menu-dropdown {
+        position: fixed !important;
+        top: 116px !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: calc(100dvh - 126px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        z-index: 11000 !important;
+    }
+
+    /* Barra inferior */
+    .casafort-bottom-nav {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: 12000 !important;
+        display: grid !important;
+    }
+
+    /* Remove efeitos caros do cabeçalho/barra em WebViews. */
+    .shop-header,
+    .casafort-bottom-nav {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+
+    /* Rolagem livre: o navegador decide se o gesto é horizontal
+       ou vertical, evitando travamento ao começar sobre imagens. */
+    .casafort-promotion-track,
+    .casafort-category-track,
+    .casafort-home-products-grid,
+    .casafort-related-track,
+    .shop-banners {
+        touch-action: auto !important;
+        scroll-snap-type: none !important;
+        scroll-behavior: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: auto !important;
+    }
+
+    .casafort-promotion-card,
+    .casafort-promotion-card img,
+    .shop-banner,
+    .shop-banner img {
+        touch-action: auto !important;
+        -webkit-user-drag: none !important;
+    }
+
+    /* Evita transformações de hover durante toque. */
+    .shop-product-card:hover,
+    .casafort-promotion-card:hover {
+        transform: none !important;
+    }
+
+    /* Botões de retorno ficam acessíveis mesmo em telas estreitas. */
+    .shop-panel-header {
+        gap: 10px !important;
+    }
+
+    #backToStoreFromFavorites,
+    #backToStoreFromProfile,
+    #backToStoreFromOrders {
+        min-height: 42px !important;
+        padding: 9px 13px !important;
+        white-space: nowrap !important;
+    }
+}
+
+/* ------------------------------------------------------------
+   CELULAR
+   ------------------------------------------------------------ */
+@media (max-width: 600px) {
+    .shop-header-inner {
+        min-height: 112px !important;
+        grid-template-rows: 56px 44px !important;
+        padding: 6px 12px 6px !important;
+    }
+
+    .shop-mobile-wrap,
+    .shop-menu-button {
+        height: 56px !important;
+        min-height: 56px !important;
+    }
+
+    .shop-menu-button::after {
+        font-size: 17px !important;
+    }
+
+    .shop-brand {
+        width: 122px !important;
+        min-width: 122px !important;
+        height: 56px !important;
+        max-height: 56px !important;
+    }
+
+    .shop-brand-logo {
+        width: 122px !important;
+        max-width: 122px !important;
+        height: 56px !important;
+        max-height: 56px !important;
+    }
+
+    .shop-menu-dropdown {
+        top: 112px !important;
+        max-height: calc(100dvh - 122px) !important;
+    }
+
+    .casafort-promotion-track {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        gap: 10px !important;
+        touch-action: auto !important;
+        scroll-snap-type: none !important;
+    }
+
+    .casafort-promotion-card,
+    .casafort-promotion-card:hover {
+        flex: 0 0 calc(100vw - 24px) !important;
+        width: calc(100vw - 24px) !important;
+        min-width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        scroll-snap-align: none !important;
+    }
+
+    .casafort-promotion-card img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
+
+    .shop-banners {
+        touch-action: auto !important;
+        scroll-snap-type: none !important;
+    }
+}
+
+/* Telas muito estreitas */
+@media (max-width: 380px) {
+    .shop-menu-button::after {
+        font-size: 16px !important;
+    }
+
+    .shop-brand,
+    .shop-brand-logo {
+        width: 112px !important;
+        min-width: 112px !important;
+        max-width: 112px !important;
+    }
+}
 </style>
 
 </head>
