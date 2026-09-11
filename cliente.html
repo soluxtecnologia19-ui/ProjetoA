@@ -12058,6 +12058,155 @@ body {
     opacity: 0 !important;
     pointer-events: none !important;
 }
+/* ============================================================
+   CASAFORT — ALINHAMENTO DOS BOTÕES DOS CARDS
+   PC / TABLET / CELULAR
+   ============================================================ */
+
+.shop-products-grid {
+    align-items: stretch !important;
+}
+
+.shop-products-grid .shop-product-card {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.shop-products-grid .shop-product-content {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+}
+
+.shop-products-grid .shop-product-button {
+    margin-top: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 900px) {
+
+    .shop-products-grid .shop-product-card {
+        height: 100% !important;
+    }
+
+    .shop-products-grid .shop-product-content {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+    }
+
+    .shop-products-grid .shop-product-button {
+        margin-top: auto !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .shop-products-grid .shop-product-button {
+        margin-top: auto !important;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1100px) {
+
+    .shop-products-grid .shop-product-button {
+        margin-top: auto !important;
+    }
+}
+/* ============================================================
+   CASAFORT — ALTURA IGUAL DOS CARDS DA PÁGINA PRINCIPAL
+   ============================================================ */
+
+.casafort-home-products-grid {
+    align-items: stretch !important;
+}
+
+.casafort-home-products-grid .shop-product-card {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    box-sizing: border-box !important;
+}
+
+.casafort-home-products-grid .shop-product-content {
+    display: flex !important;
+    flex-direction: column !important;
+
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+.casafort-home-products-grid .shop-product-button {
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (min-width: 601px) and (max-width: 1100px) {
+
+    .casafort-home-products-grid .shop-product-card {
+        height: 540px !important;
+        min-height: 540px !important;
+        max-height: 540px !important;
+    }
+
+}
+
+
+/* ============================================================
+   CELULAR
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .casafort-home-products-grid .shop-product-card {
+        height: 500px !important;
+        min-height: 500px !important;
+        max-height: 500px !important;
+    }
+
+}
+
+/* ============================================================
+   CELULAR
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .casafort-home-products-grid {
+        align-items: stretch !important;
+    }
+
+    .casafort-home-products-grid .shop-product-card {
+        display: flex !important;
+        flex-direction: column !important;
+        align-self: stretch !important;
+    }
+
+    .casafort-home-products-grid .shop-product-content {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+    }
+
+    .casafort-home-products-grid .shop-product-button {
+        margin-top: auto !important;
+    }
+
+}
 </style>
 
 </head>
