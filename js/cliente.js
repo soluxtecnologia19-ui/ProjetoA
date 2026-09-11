@@ -8216,143 +8216,458 @@ function toggleMobileMenu() {
 /* ============================================================
    NAVEGAÇÃO INFERIOR — MOBILE / TABLET
    Os botões do HTML usam data-bottom-action.
-   Este listener é deliberadamente delegado no document para
-   continuar funcionando mesmo quando seções são redesenhadas.
+
+   Este listener é delegado no document para continuar
+   funcionando mesmo quando as seções são redesenhadas.
+
+   A função goToHomeStore() também é usada pelo LOGO
+   da CasaFort no PC, celular e tablet.
    ============================================================ */
 
 function setBottomNavigationActive(action) {
-    const items = document.querySelectorAll(
-        ".casafort-bottom-item[data-bottom-action]"
-    );
+
+    const items =
+        document.querySelectorAll(
+            ".casafort-bottom-item[data-bottom-action]"
+        );
+
 
     items.forEach(item => {
+
         item.classList.toggle(
             "active",
             item.dataset.bottomAction === action
         );
+
     });
 }
 
+
+/* ============================================================
+   VOLTAR PARA A PÁGINA INICIAL
+   ============================================================ */
+
 function goToHomeStore() {
-    /* Fecha qualquer camada que possa impedir o toque seguinte. */
+
+    /*
+     * Fecha qualquer menu que esteja aberto.
+     */
     closeMobileMenu();
 
-    if (productModal && !productModal.hidden) {
+
+    /*
+     * Fecha detalhe de produto, se estiver aberto.
+     */
+    if (
+        productModal &&
+        !productModal.hidden
+    ) {
+
         closeProductDetails(true);
+
     }
 
-    if (cartDrawer && !cartDrawer.hidden) {
+
+    /*
+     * Fecha o carrinho, se estiver aberto.
+     */
+    if (
+        cartDrawer &&
+        !cartDrawer.hidden
+    ) {
+
         closeCart();
+
     }
+
+
+    /*
+     * ========================================================
+     * LIMPA O ESTADO DA CATEGORIA
+     * ========================================================
+     *
+     * Este é um dos pontos principais da correção.
+     *
+     * Quando o usuário entra em uma categoria, o sistema
+     * guarda o ID dela em selectedCategoryId.
+     *
+     * Ao voltar para a página inicial, precisamos zerar
+     * esse valor.
+     */
 
     selectedCategoryId = "";
-    filteredProducts = [...allProducts];
+
+
+    /*
+     * Mostra novamente todos os produtos.
+     */
+    filteredProducts =
+        [
+            ...allProducts
+        ];
+
+
+    /*
+     * ========================================================
+     * LIMPA A URL
+     * ========================================================
+     */
 
     try {
-        const url = new URL(window.location.href);
-        url.hash = "";
-        url.searchParams.delete("ofertas");
 
+        const url =
+            new URL(
+                window.location.href
+            );
+
+
+        /*
+         * Remove a categoria da URL.
+         *
+         * Exemplo:
+         *
+         * ANTES:
+         * cliente.html?categoria=123
+         *
+         * DEPOIS:
+         * cliente.html
+         */
+        url.searchParams.delete(
+            "categoria"
+        );
+
+
+        /*
+         * Remove também o estado de ofertas.
+         */
+        url.searchParams.delete(
+            "ofertas"
+        );
+
+
+        /*
+         * Remove qualquer hash.
+         */
+        url.hash = "";
+
+
+        /*
+         * Substitui o endereço atual sem criar
+         * uma nova entrada no histórico.
+         */
         window.history.replaceState(
             {
                 ...(window.history.state || {}),
-                casafortOffers: false,
-                casafortSection: null,
-                casafortProduct: null
+
+                casafortOffers:
+                    false,
+
+                casafortSection:
+                    null,
+
+                casafortProduct:
+                    null,
+
+                categoria:
+                    ""
             },
+
             "",
+
             `${url.pathname}${url.search}${url.hash}`
         );
+
+
     } catch (error) {
+
         console.warn(
             "Não foi possível limpar o estado da página inicial.",
             error
         );
+
     }
+
+
+    /*
+     * ========================================================
+     * MOSTRA A VITRINE PRINCIPAL
+     * ========================================================
+     */
 
     showStore();
+
+
+    /*
+     * Reconstroi as áreas da página inicial.
+     */
+
     renderHomeProducts();
+
     renderCategoryItems();
+
     renderCategoryStrip();
+
     renderProducts();
+
     updateCategoryPage("");
 
-    setBottomNavigationActive("store");
-}
 
-document.addEventListener("click", async event => {
-    const item = event.target.closest(
-        ".casafort-bottom-item[data-bottom-action]"
+    /*
+     * Deixa o botão Início/Vitrine ativo.
+     */
+
+    setBottomNavigationActive(
+        "store"
     );
 
-    if (!item) return;
 
-    event.preventDefault();
-    event.stopPropagation();
+    /*
+     * Volta para o topo da página.
+     */
 
-    const action = item.dataset.bottomAction;
+    window.scrollTo({
+        top: 0,
+        behavior: "auto"
+    });
+}
 
-    try {
-        if (action === "store") {
-            goToHomeStore();
+
+/* ============================================================
+   CLIQUES DA NAVEGAÇÃO INFERIOR
+   ============================================================ */
+
+document.addEventListener(
+    "click",
+    async event => {
+
+        const item =
+            event.target.closest(
+                ".casafort-bottom-item[data-bottom-action]"
+            );
+
+
+        if (!item) {
             return;
         }
 
-        if (action === "favorites") {
-            if (productModal && !productModal.hidden) {
-                closeProductDetails(true);
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        const action =
+            item.dataset.bottomAction;
+
+
+        try {
+
+            /*
+             * ==================================================
+             * INÍCIO / VITRINE
+             * ==================================================
+             */
+
+            if (
+                action ===
+                "store"
+            ) {
+
+                goToHomeStore();
+
+                return;
             }
-            if (cartDrawer && !cartDrawer.hidden) {
-                closeCart();
+
+
+            /*
+             * ==================================================
+             * FAVORITOS
+             * ==================================================
+             */
+
+            if (
+                action ===
+                "favorites"
+            ) {
+
+                if (
+                    productModal &&
+                    !productModal.hidden
+                ) {
+
+                    closeProductDetails(true);
+
+                }
+
+
+                if (
+                    cartDrawer &&
+                    !cartDrawer.hidden
+                ) {
+
+                    closeCart();
+
+                }
+
+
+                showFavorites();
+
+
+                setBottomNavigationActive(
+                    "favorites"
+                );
+
+
+                return;
             }
-            showFavorites();
-            setBottomNavigationActive("favorites");
+
+
+            /*
+             * ==================================================
+             * CARRINHO
+             * ==================================================
+             */
+
+            if (
+                action ===
+                "cart"
+            ) {
+
+                closeMobileMenu();
+
+
+                setBottomNavigationActive(
+                    "cart"
+                );
+
+
+                openCart();
+
+
+                return;
+            }
+
+
+            /*
+             * ==================================================
+             * PEDIDOS
+             * ==================================================
+             */
+
+            if (
+                action ===
+                "orders"
+            ) {
+
+                if (
+                    productModal &&
+                    !productModal.hidden
+                ) {
+
+                    closeProductDetails(true);
+
+                }
+
+
+                if (
+                    cartDrawer &&
+                    !cartDrawer.hidden
+                ) {
+
+                    closeCart();
+
+                }
+
+
+                setBottomNavigationActive(
+                    "orders"
+                );
+
+
+                await showOrders();
+
+
+                return;
+            }
+
+
+            /*
+             * ==================================================
+             * CONTA / PERFIL
+             * ==================================================
+             */
+
+            if (
+                action ===
+                "account"
+            ) {
+
+                if (
+                    productModal &&
+                    !productModal.hidden
+                ) {
+
+                    closeProductDetails(true);
+
+                }
+
+
+                if (
+                    cartDrawer &&
+                    !cartDrawer.hidden
+                ) {
+
+                    closeCart();
+
+                }
+
+
+                showProfile();
+
+
+                setBottomNavigationActive(
+                    "account"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Erro na navegação inferior:",
+                error
+            );
+
+        }
+
+    },
+    false
+);
+
+
+/* ============================================================
+   EVENTO GLOBAL DE NAVEGAÇÃO
+   ============================================================ */
+
+document.addEventListener(
+    "casafort:navigation",
+    event => {
+
+        const action =
+            event.detail?.action;
+
+
+        if (!action) {
             return;
         }
 
-        if (action === "cart") {
-            closeMobileMenu();
-            setBottomNavigationActive("cart");
-            openCart();
-            return;
-        }
 
-        if (action === "orders") {
-            if (productModal && !productModal.hidden) {
-                closeProductDetails(true);
-            }
-            if (cartDrawer && !cartDrawer.hidden) {
-                closeCart();
-            }
-            setBottomNavigationActive("orders");
-            await showOrders();
-            return;
-        }
-
-        if (action === "account") {
-            if (productModal && !productModal.hidden) {
-                closeProductDetails(true);
-            }
-            if (cartDrawer && !cartDrawer.hidden) {
-                closeCart();
-            }
-            showProfile();
-            setBottomNavigationActive("account");
-        }
-    } catch (error) {
-        console.error(
-            "Erro na navegação inferior:",
-            error
+        setBottomNavigationActive(
+            action
         );
+
     }
-}, false);
-
-/* Ao voltar para a vitrine, mantém o botão Início destacado. */
-document.addEventListener("casafort:navigation", event => {
-    const action = event.detail?.action;
-    if (action) setBottomNavigationActive(action);
-});
-
+);
 
 /* ============================================================
    LOGOUT
@@ -9758,35 +10073,87 @@ if (logoutButton) {
    HOME / MARCA
    ============================================================ */
 
+/*
+ * O logo da CasaFort sempre deve levar para a página inicial
+ * real da loja.
+ *
+ * NÃO vamos depender do estado da categoria, histórico,
+ * modal ou seção atual.
+ *
+ * Ao clicar no logo:
+ *
+ * categoria antiga  -> eliminada
+ * ofertas antigas   -> eliminadas
+ * produto aberto    -> eliminado
+ * hash              -> eliminado
+ *
+ * A página é carregada novamente em cliente.html.
+ *
+ * Isso funciona no:
+ * - PC
+ * - notebook
+ * - tablet
+ * - celular
+ */
+
 const brandHome =
     $("brandHome");
 
+
 if (brandHome) {
+
     brandHome.addEventListener(
         "click",
         event => {
+
             /*
-             * O href="./cliente.html" é o fallback nativo.
-             * Quando o JS está ativo, a navegação é feita sem
-             * perder o estado da vitrine já carregada.
+             * Impede o navegador de seguir o href
+             * antigo antes de executarmos a navegação.
              */
             event.preventDefault();
+
             event.stopPropagation();
 
-            goToHomeStore();
+
+            /*
+             * Caminho REAL da página inicial.
+             *
+             * O navegador vai carregar cliente.html
+             * novamente, eliminando qualquer categoria
+             * que estava na página anterior.
+             */
+            window.location.href =
+                "./cliente.html";
+
         },
         false
     );
+
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    setBottomNavigationActive(
-        storeSection && !storeSection.hidden
-            ? "store"
-            : ""
-    );
-});
 
+/*
+ * ============================================================
+ * INÍCIO DA PÁGINA
+ * ============================================================
+ *
+ * Quando cliente.html é carregado novamente, garantimos que
+ * nenhuma seção antiga fique marcada como ativa.
+ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        setBottomNavigationActive(
+            storeSection &&
+            !storeSection.hidden
+                ? "store"
+                : ""
+        );
+
+    }
+);
 /* ============================================================
    CLIQUE FORA DO MENU MOBILE
    ============================================================ */
