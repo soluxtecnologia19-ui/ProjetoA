@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Entre na sua conta para comprar e acompanhar seus pedidos."
+    >
+
+    <meta
+        name="theme-color"
+        content="#16803c"
+    >
+
+    <title>Entrar | Minha Empresa</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <style>
+
+        /* =====================================================
+           LOGIN PROFISSIONAL
+           ===================================================== */
+
+        :root {
+            --login-green: #16803c;
+            --login-green-dark: #0f6a31;
+            --login-green-light: #eaf7ef;
+            --login-border: #d9e5dc;
+            --login-text: #17351f;
+            --login-muted: #66756b;
+            --login-white: #ffffff;
+            --login-bg: #f3f8f4;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body.auth-page {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(22, 128, 60, 0.13),
+                    transparent 32%
+                ),
+                linear-gradient(
+                    135deg,
+                    #f7fbf8 0%,
+                    #eef7f1 100%
+                );
+            color: var(--login-text);
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        .auth-container {
+            width: 100%;
+            min-height: 100vh;
+            padding: 25px 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 460px;
+            padding: 38px;
+            background: var(--login-white);
+            border: 1px solid rgba(22, 128, 60, 0.10);
+            border-radius: 24px;
+            box-shadow:
+                0 20px 60px rgba(18, 72, 37, 0.10),
+                0 4px 16px rgba(18, 72, 37, 0.06);
+        }
+
+        .auth-logo {
+            display: block;
+            margin-bottom: 30px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--login-green);
+            font-size: 1.85rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .auth-logo:hover {
+            color: var(--login-green-dark);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-header h1 {
+            margin: 0 0 10px;
+            color: var(--login-text);
+            font-size: 2rem;
+            line-height: 1.15;
+            font-weight: 850;
+        }
+
+        .auth-header p {
+            margin: 0;
+            color: var(--login-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .auth-form {
+            width: 100%;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            color: var(--login-text);
+            font-size: 0.88rem;
+            font-weight: 750;
+        }
+
+        .form-group input {
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 14px;
+            border: 1px solid var(--login-border);
+            border-radius: 11px;
+            outline: none;
+            background: #fff;
+            color: var(--login-text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .form-group input::placeholder {
+            color: #a3aea7;
+        }
+
+        .form-group input:hover {
+            border-color: #b9dfc5;
+        }
+
+        .form-group input:focus {
+            border-color: var(--login-green);
+            box-shadow:
+                0 0 0 3px rgba(22, 128, 60, 0.12);
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 4px 0 20px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--login-muted);
+            font-size: 0.84rem;
+            cursor: pointer;
+        }
+
+        .remember-me input {
+            width: 17px;
+            height: 17px;
+            margin: 0;
+            accent-color: var(--login-green);
+            cursor: pointer;
+        }
+
+        #forgotPassword {
+            color: var(--login-green);
+            font-size: 0.84rem;
+            font-weight: 750;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #forgotPassword:hover {
+            color: var(--login-green-dark);
+            text-decoration: underline;
+        }
+
+        .auth-submit {
+            width: 100%;
+            min-height: 52px;
+            border: 2px solid var(--login-green);
+            border-radius: 12px;
+            background: var(--login-green);
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition:
+                background 0.18s ease,
+                border-color 0.18s ease,
+                transform 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .auth-submit:hover:not(:disabled) {
+            background: var(--login-green-dark);
+            border-color: var(--login-green-dark);
+            transform: translateY(-1px);
+            box-shadow:
+                0 8px 20px rgba(22, 128, 60, 0.18);
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .form-message {
+            min-height: 24px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.88rem;
+            font-weight: 650;
+            line-height: 1.5;
+        }
+
+        .login-security {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 13px 14px;
+            border-radius: 11px;
+            background: var(--login-green-light);
+            color: var(--login-muted);
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+
+        .login-security-icon {
+            color: var(--login-green);
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        .auth-footer {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--login-border);
+            text-align: center;
+        }
+
+        .auth-footer p {
+            margin: 0 0 8px;
+            color: var(--login-muted);
+            font-size: 0.9rem;
+        }
+
+        .auth-footer a {
+            color: var(--login-green);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            display: block;
+            margin-top: 22px;
+            text-align: center;
+            color: var(--login-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 650;
+        }
+
+        .back-home:hover {
+            color: var(--login-green);
+        }
+
+        @media (max-width: 520px) {
+
+            .auth-container {
+                padding: 15px 10px;
+            }
+
+            .auth-card {
+                padding: 28px 18px;
+                border-radius: 18px;
+            }
+
+            .auth-logo {
+                font-size: 1.55rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.55rem;
+            }
+
+            .form-options {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body class="auth-page">
+
+    <main class="auth-container">
+
+        <div class="auth-card">
+
+
+            <!-- =================================================
+                 LOGO
+                 ================================================= -->
+
+            <a
+                href="index.html"
+                class="auth-logo"
+            >
+                Minha Empresa
+            </a>
+
+
+            <!-- =================================================
+                 CABEÇALHO
+                 ================================================= -->
+
+            <div class="auth-header">
+
+                <h1>
+                    Bem-vindo de volta
+                </h1>
+
+                <p>
+                    Entre na sua conta para continuar suas compras
+                    e acompanhar seus pedidos.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORMULÁRIO
+                 ================================================= -->
+
+            <form
+                id="loginForm"
+                class="auth-form"
+                autocomplete="on"
+            >
+
+
+                <!-- E-MAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="seu@email.com"
+                        autocomplete="email"
+                        maxlength="160"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- SENHA -->
+
+                <div class="form-group">
+
+                    <label for="senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- OPÇÕES -->
+
+                <div class="form-options">
+
+                    <label class="remember-me">
+
+                        <input
+                            type="checkbox"
+                            id="lembrar"
+                            name="lembrar"
+                        >
+
+                        <span>
+                            Lembrar de mim
+                        </span>
+
+                    </label>
+
+
+                    <a
+                        href="#"
+                        id="forgotPassword"
+                    >
+                        Esqueci minha senha
+                    </a>
+
+                </div>
+
+
+                <!-- BOTÃO -->
+
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+                    Entrar
+                </button>
+
+
+                <!-- MENSAGEM -->
+
+                <div
+                    id="loginMessage"
+                    class="form-message"
+                    aria-live="polite"
+                ></div>
+
+
+                <!-- SEGURANÇA -->
+
+                <div class="login-security">
+
+                    <span class="login-security-icon">
+                        ✓
+                    </span>
+
+                    <span>
+                        Seus dados de acesso são protegidos
+                        pelo sistema de autenticação da loja.
+                    </span>
+
+                </div>
+
+            </form>
+
+
+            <!-- =================================================
+                 CADASTRO
+                 ================================================= -->
+
+            <div class="auth-footer">
+
+                <p>
+                    Ainda não possui uma conta?
+                </p>
+
+                <a href="cadastro.html">
+                    Criar minha conta
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 VOLTAR
+                 ================================================= -->
+
+            <a
+                href="index.html"
+                class="back-home"
+            >
+                ← Voltar para o início
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         FIREBASE / AUTENTICAÇÃO
+         ========================================================= -->
+
+    <script
+        type="module"
+        src="js/auth.js"
+    ></script>
+
+</body>
+
+</html>

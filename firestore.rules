@@ -1,0 +1,72 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    function isAdmin() { return isAuthenticated() && request.auth.token.admin == true; }
+    function isOwner(uid) { return isAuthenticated() && request.auth.uid == uid; }
+
+    match /clientes/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.tipoUsuario == 'cliente';
+
+      allow read: if isAdmin() || isOwner(uid);
+
+      allow update: if isAdmin()
+        || (
+          isOwner(uid)
+          && request.resource.data.uid == resource.data.uid
+          && request.resource.data.email == resource.data.email
+          && request.resource.data.tipoUsuario == resource.data.tipoUsuario
+          && request.resource.data.status == resource.data.status
+          && request.resource.data.dataCadastro == resource.data.dataCadastro
+          && request.resource.data.aceitaTermos == resource.data.aceitaTermos
+          && request.resource.data.aceitaPrivacidade == resource.data.aceitaPrivacidade
+          && request.resource.data.aceitaMarketing == resource.data.aceitaMarketing
+          && resource.data.email != 'soluxtecnologia19@gmail.com'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'telefone', 'endereco'])
+        );
+
+      allow delete: if (isOwner(uid) || isAdmin())
+        && resource.data.email != 'soluxtecnologia19@gmail.com';
+    }
+
+    match /produtos/{produtoId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.ativo == true);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /categorias/{categoriaId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /pedidos/{pedidoId} {
+      allow create: if isAdmin() || (isAuthenticated() && (
+        request.resource.data.clienteId == request.auth.uid
+        || request.resource.data.uid == request.auth.uid
+        || request.resource.data.userId == request.auth.uid
+      ));
+      allow read: if isAdmin() || (isAuthenticated() && (
+        resource.data.clienteId == request.auth.uid
+        || resource.data.uid == request.auth.uid
+        || resource.data.userId == request.auth.uid
+      ));
+      allow update, delete: if isAdmin();
+    }
+
+    match /marketing/{marketingId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /configuracoes/{configuracaoId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}

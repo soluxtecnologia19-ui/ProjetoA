@@ -1,0 +1,2838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Painel administrativo da empresa"
+    >
+
+    <title>Painel Administrativo | Minha Empresa</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <style>
+
+        /* =========================================
+           ESTRUTURA DAS TELAS
+        ========================================== */
+
+        .admin-main {
+            margin-left: 0 !important;
+        }
+
+        .admin-page-section {
+            display: none;
+        }
+
+        .admin-page-section.active-section {
+            display: block;
+        }
+
+        /* =========================================
+           AJUSTES VISUAIS DO DASHBOARD
+        ========================================== */
+
+        .admin-page-heading {
+            text-align: center;
+            justify-content: center;
+        }
+
+        .admin-page-heading > div {
+            width: 100%;
+        }
+
+        .admin-stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .admin-back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 10px 18px;
+            border: 1px solid #cfd4da;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1f2933;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .admin-back-button:hover {
+            background: #f3f4f6;
+            border-color: #aeb5bd;
+        }
+
+        @media (max-width: 760px) {
+            .admin-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        /* =========================================
+           MENU HAMBÚRGUER — COMPATÍVEL COM admin.js
+        ========================================== */
+
+        .admin-menu-button {
+            position: relative;
+            display: inline-flex;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 5px;
+            border: 1px solid #343a40;
+            border-radius: 8px;
+            background: #212529;
+            cursor: pointer;
+            z-index: 10002;
+        }
+
+        .admin-menu-button span {
+            display: block;
+            width: 21px;
+            height: 2px;
+            border-radius: 2px;
+            background: #ffffff;
+            transition: transform .2s ease, opacity .2s ease;
+        }
+
+        .admin-menu-button.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .admin-menu-button.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .admin-menu-button.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .admin-menu-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9997;
+            background: rgba(0,0,0,.45);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .2s ease, visibility .2s ease;
+        }
+
+        .admin-menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: auto;
+            width: min(360px, 88vw);
+            height: 100vh;
+            z-index: 9999;
+            transform: translateX(100%);
+            transition: transform .25s ease;
+            overflow-y: auto;
+            border-left: 1px solid #343a40;
+            border-right: none;
+        }
+
+        .admin-sidebar.open {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 760px) {
+            .admin-header {
+                gap: 10px;
+            }
+
+            .admin-user-label {
+                display: none;
+            }
+
+            .admin-logout-button {
+                padding: 8px 10px;
+            }
+
+            .admin-sidebar {
+                width: min(330px, 90vw);
+            }
+        }
+
+        /* =========================================
+           MARKETINK / PUBLICIDADE
+        ========================================== */
+
+        .admin-marketing-card {
+            margin-top: 20px;
+            padding: 24px;
+            background: #ffffff;
+            border: 1px solid #dbe3e8;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(20, 35, 45, .06);
+        }
+
+        .admin-marketing-header h3 {
+            margin: 0;
+            color: #17351f;
+            font-size: 20px;
+        }
+
+        .admin-marketing-header p {
+            margin: 6px 0 0;
+            color: #66756b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .admin-marketing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .admin-marketing-field {
+            min-width: 0;
+        }
+
+        .admin-marketing-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #26352e;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .admin-marketing-field input {
+            width: 100%;
+            min-height: 46px;
+            padding: 10px 13px;
+            border: 1px solid #ced7d1;
+            border-radius: 10px;
+            background: #fbfdfb;
+            color: #18251f;
+            outline: none;
+            transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+
+        .admin-marketing-field input:focus {
+            background: #ffffff;
+            border-color: #16803c;
+            box-shadow: 0 0 0 4px rgba(22, 128, 60, .08);
+        }
+
+        .admin-marketing-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .admin-marketing-actions .form-message {
+            margin-right: auto;
+        }
+
+        .admin-marketing-save-button {
+            min-height: 46px;
+            padding: 10px 20px;
+            border: 1px solid #16803c;
+            border-radius: 10px;
+            background: #16803c;
+            color: #ffffff;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .18s ease;
+        }
+
+        .admin-marketing-save-button:hover {
+            background: #126b32;
+            border-color: #126b32;
+        }
+
+        .admin-marketing-save-button:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        @media (max-width: 760px) {
+            .admin-marketing-card {
+                padding: 17px;
+                border-radius: 14px;
+            }
+
+            .admin-marketing-grid {
+                grid-template-columns: 1fr;
+                gap: 13px;
+            }
+
+            .admin-marketing-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .admin-marketing-actions .form-message {
+                margin-right: 0;
+            }
+
+            .admin-marketing-save-button {
+                width: 100%;
+            }
+        }
+
+
+        /* =========================================
+           CATEGORIAS DE PRODUTOS
+        ========================================== */
+
+        .admin-category-form-row {
+            display:flex;
+            align-items:flex-end;
+            gap:10px;
+            width:100%;
+        }
+
+        .admin-category-form-row > .admin-form-group {
+            flex:1;
+            margin:0;
+        }
+
+        .admin-category-select {
+            width:100%;
+            min-height:44px;
+            padding:10px 12px;
+            border:1px solid #ced4da;
+            border-radius:8px;
+            background:#fff;
+            color:#17351f;
+            font:inherit;
+        }
+
+        .admin-category-inline-button,
+        .admin-new-category-button {
+            min-height:44px;
+            padding:10px 15px;
+            border:1px solid #16803c;
+            border-radius:8px;
+            background:#fff;
+            color:#16803c;
+            font:inherit;
+            font-weight:800;
+            cursor:pointer;
+            transition:.2s ease;
+            white-space:nowrap;
+        }
+
+        .admin-category-inline-button:hover,
+        .admin-new-category-button:hover {
+            background:#eaf7ef;
+        }
+
+        .admin-categories-card {
+            margin-top:20px;
+            padding:22px;
+            background:#fff;
+            border:1px solid #d9e5dc;
+            border-radius:16px;
+            box-shadow:0 8px 24px rgba(23,53,31,.06);
+        }
+
+        .admin-categories-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom:18px;
+        }
+
+        .admin-categories-header h3,
+        .admin-category-products-header h3 {
+            margin:0;
+            color:#17351f;
+        }
+
+        .admin-categories-header p {
+            margin:5px 0 0;
+            color:#66756b;
+            font-size:14px;
+        }
+
+        .admin-categories-list {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+            gap:12px;
+        }
+
+        .admin-category-card {
+            width:100%;
+            min-height:112px;
+            padding:18px;
+            border:1px solid #d9e5dc;
+            border-radius:14px;
+            background:#fbfdfb;
+            color:#17351f;
+            text-align:left;
+            cursor:pointer;
+            transition:.2s ease;
+        }
+
+        .admin-category-card:hover {
+            transform:translateY(-2px);
+            border-color:#16803c;
+            box-shadow:0 8px 20px rgba(22,128,60,.10);
+        }
+
+        .admin-category-card-title {
+            display:block;
+            font-size:16px;
+            font-weight:800;
+            margin-bottom:8px;
+        }
+
+        .admin-category-card-count {
+            display:block;
+            color:#66756b;
+            font-size:13px;
+        }
+
+        .admin-category-empty,
+        .admin-category-products-empty {
+            padding:24px;
+            border:1px dashed #cfd9d2;
+            border-radius:12px;
+            text-align:center;
+            color:#66756b;
+            background:#fbfdfb;
+        }
+
+        .admin-category-products {
+            margin-top:18px;
+        }
+
+        .admin-category-products-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:14px;
+        }
+
+        .admin-category-back-button {
+            border:1px solid #cfd4da;
+            background:#fff;
+            color:#1f2933;
+            border-radius:8px;
+            padding:9px 13px;
+            cursor:pointer;
+            font:inherit;
+            font-weight:700;
+        }
+
+        .admin-category-back-button:hover {
+            background:#f3f4f6;
+        }
+
+        .admin-category-products-table {
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        .admin-category-products-table th,
+        .admin-category-products-table td {
+            padding:11px;
+            border-bottom:1px solid #e8eee9;
+            text-align:left;
+        }
+
+        .admin-category-products-table th {
+            color:#17351f;
+            background:#f6faf7;
+            font-size:13px;
+        }
+
+        .admin-category-modal {
+            position:fixed;
+            inset:0;
+            z-index:20000;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+            background:rgba(0,0,0,.55);
+            opacity:0;
+            visibility:hidden;
+            pointer-events:none;
+            transition:.2s ease;
+        }
+
+        .admin-category-modal.open {
+            opacity:1;
+            visibility:visible;
+            pointer-events:auto;
+        }
+
+        .admin-category-modal-card {
+            width:min(520px,100%);
+            background:#fff;
+            border-radius:16px;
+            padding:24px;
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+        }
+
+        .admin-category-modal-card h3 {
+            margin:0;
+            color:#17351f;
+        }
+
+        .admin-category-modal-card p {
+            margin:7px 0 18px;
+            color:#66756b;
+        }
+
+        .admin-category-modal-card input {
+            width:100%;
+            min-height:46px;
+            box-sizing:border-box;
+            padding:10px 12px;
+            border:1px solid #ced4da;
+            border-radius:8px;
+            font:inherit;
+        }
+
+        .admin-category-modal-actions {
+            display:flex;
+            justify-content:flex-end;
+            gap:10px;
+            margin-top:18px;
+        }
+
+        .admin-category-modal-cancel,
+        .admin-category-modal-save {
+            min-height:42px;
+            padding:9px 15px;
+            border-radius:8px;
+            cursor:pointer;
+            font:inherit;
+            font-weight:800;
+        }
+
+        .admin-category-modal-cancel {
+            border:1px solid #cfd4da;
+            background:#fff;
+            color:#1f2933;
+        }
+
+        .admin-category-modal-save {
+            border:1px solid #16803c;
+            background:#16803c;
+            color:#fff;
+        }
+
+        @media (max-width:760px) {
+            .admin-category-form-row,
+            .admin-categories-header,
+            .admin-category-products-header {
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .admin-category-inline-button,
+            .admin-new-category-button,
+            .admin-category-back-button {
+                width:100%;
+            }
+
+            .admin-categories-card {
+                padding:16px;
+            }
+
+            .admin-category-products-table {
+                min-width:650px;
+            }
+
+            .admin-category-products {
+                overflow-x:auto;
+            }
+        }
+
+
+
+        /* =========================================
+           CATEGORIAS — VISUAL MODERNO E RESPONSIVO
+        ========================================== */
+
+        .admin-categories-card{
+            background:linear-gradient(180deg,#ffffff 0%,#fbfdfb 100%);
+            border:1px solid #dbe7df;
+            border-radius:20px;
+            box-shadow:0 12px 32px rgba(20,55,32,.07);
+            padding:24px;
+        }
+
+        .admin-categories-header{
+            align-items:center;
+            margin-bottom:20px;
+        }
+
+        .admin-categories-header h3{
+            font-size:20px;
+            letter-spacing:-.02em;
+        }
+
+        .admin-category-card{
+            position:relative;
+            min-height:128px;
+            padding:20px;
+            border:1px solid #dce8df;
+            border-radius:16px;
+            background:#ffffff;
+            box-shadow:0 4px 14px rgba(20,55,32,.035);
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        .admin-category-card::after{
+            content:"›";
+            position:absolute;
+            right:18px;
+            top:50%;
+            transform:translateY(-50%);
+            font-size:24px;
+            color:#16803c;
+            opacity:.55;
+        }
+
+        .admin-category-card:hover,
+        .admin-category-card:focus-visible{
+            transform:translateY(-2px);
+            border-color:#16803c;
+            box-shadow:0 12px 26px rgba(22,128,60,.11);
+            outline:none;
+        }
+
+        .admin-category-card:active{
+            transform:translateY(0);
+        }
+
+        .admin-category-card-title{
+            padding-right:28px;
+            font-size:17px;
+            line-height:1.3;
+        }
+
+        .admin-category-card-count{
+            margin-top:3px;
+        }
+
+        .admin-category-products{
+            margin-top:22px;
+            padding-top:20px;
+            border-top:1px solid #e4ece7;
+        }
+
+        .admin-category-products-header{
+            margin-bottom:18px;
+        }
+
+        .admin-category-products-header h3{
+            font-size:20px;
+            letter-spacing:-.02em;
+        }
+
+        .admin-category-products-table{
+            overflow:hidden;
+            border:1px solid #dfe8e2;
+            border-radius:14px;
+            background:#fff;
+        }
+
+        .admin-category-products-table th{
+            font-weight:800;
+            letter-spacing:.01em;
+        }
+
+        .admin-category-products-table td{
+            vertical-align:middle;
+        }
+
+        .admin-category-product-name{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            max-width:100%;
+            border:0;
+            background:transparent;
+            color:#087a38;
+            cursor:pointer;
+            padding:4px 0;
+            font:inherit;
+            font-weight:800;
+            line-height:1.35;
+            text-align:left;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+/* PRODUTO ESGOTADO */
+
+.status-out {
+    color: #dc2626 !important;
+    font-weight: 800;
+}
+
+.product-out-of-stock {
+    color: #dc2626 !important;
+    font-weight: 800;
+}
+        .admin-category-product-name:hover{
+            text-decoration:underline;
+        }
+
+        .admin-category-product-actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:7px;
+            align-items:center;
+        }
+
+        .admin-category-action{
+            min-height:38px;
+            padding:8px 12px;
+            border-radius:9px;
+            font:inherit;
+            font-size:13px;
+            font-weight:800;
+            cursor:pointer;
+            transition:.18s ease;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        .admin-category-action.preview,
+        .admin-category-action.edit{
+            border:1px solid #16803c;
+            background:#fff;
+            color:#16803c;
+        }
+
+        .admin-category-action.preview:hover,
+        .admin-category-action.edit:hover{
+            background:#eaf7ef;
+        }
+
+        .admin-category-action.delete{
+            border:1px solid #dc2626;
+            background:#dc2626;
+            color:#fff;
+        }
+
+        .admin-category-action.delete:hover{
+            background:#b91c1c;
+            border-color:#b91c1c;
+        }
+
+        .admin-category-status{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-height:28px;
+            padding:4px 9px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:800;
+            white-space:nowrap;
+        }
+
+        @media (max-width:760px){
+            .admin-categories-card{
+                padding:16px;
+                border-radius:16px;
+            }
+
+            .admin-categories-list{
+                grid-template-columns:1fr;
+            }
+
+            .admin-category-card{
+                min-height:104px;
+            }
+
+            .admin-category-products{
+                overflow:visible;
+            }
+
+            .admin-category-products-table{
+                min-width:720px;
+            }
+
+            .admin-category-products .admin-table-wrapper{
+                overflow-x:auto;
+                -webkit-overflow-scrolling:touch;
+                border-radius:14px;
+            }
+
+            .admin-category-product-actions{
+                min-width:220px;
+            }
+
+            .admin-category-action{
+                min-height:40px;
+                padding:9px 12px;
+            }
+
+            .admin-category-modal{
+                padding:
+                    max(16px, env(safe-area-inset-top))
+                    max(16px, env(safe-area-inset-right))
+                    max(16px, env(safe-area-inset-bottom))
+                    max(16px, env(safe-area-inset-left));
+            }
+        }
+
+        @media (max-width:480px){
+            .admin-category-card-title{
+                font-size:16px;
+            }
+
+            .admin-category-products-header{
+                gap:10px;
+            }
+
+            .admin-category-products-header h3{
+                font-size:18px;
+            }
+        }
+
+        /* Evita zoom automático e melhora toque em navegadores móveis */
+        @media (pointer:coarse){
+            .admin-category-action,
+            .admin-category-card,
+            .admin-category-back-button,
+            .admin-new-category-button,
+            .admin-category-inline-button{
+                touch-action:manipulation;
+            }
+        }
+
+
+        /* =========================================
+           ENTREGA / FRETE
+        ========================================== */
+        .admin-delivery-card{margin-top:20px;padding:24px;background:#fff;border:1px solid #dbe3e8;border-radius:16px;box-shadow:0 8px 24px rgba(20,35,45,.06)}
+        .admin-delivery-header h3{margin:0;color:#17351f;font-size:20px}
+        .admin-delivery-header p{margin:7px 0 0;color:#66756b;font-size:14px;line-height:1.5}
+        .admin-delivery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+        .admin-delivery-field{min-width:0}
+        .admin-delivery-field.full{grid-column:1/-1}
+        .admin-delivery-field label{display:block;margin-bottom:7px;color:#26352e;font-size:13px;font-weight:800}
+        .admin-delivery-field input,.admin-delivery-field select{width:100%;min-height:46px;box-sizing:border-box;padding:10px 13px;border:1px solid #ced7d1;border-radius:10px;background:#fbfdfb;color:#18251f;font:inherit;outline:none}
+        .admin-delivery-field input:focus,.admin-delivery-field select:focus{background:#fff;border-color:#16803c;box-shadow:0 0 0 4px rgba(22,128,60,.08)}
+        .admin-delivery-switch{display:flex;align-items:center;gap:16px;min-height:46px}
+        .admin-delivery-switch input{width:18px;height:18px;accent-color:#16803c}
+        .admin-delivery-help{margin-top:7px;color:#66756b;font-size:12px;line-height:1.45}
+        .admin-delivery-method-box{margin-top:18px;padding:18px;border:1px solid #dbe7df;border-radius:14px;background:#f8fbf9}
+        .admin-delivery-method-box h4{margin:0 0 12px;color:#17351f}
+        .admin-delivery-hidden{display:none!important}
+        .admin-delivery-badge{display:inline-flex;align-items:center;min-height:28px;padding:4px 10px;border-radius:999px;background:#eaf7ef;color:#16803c;font-size:12px;font-weight:800}
+        .admin-delivery-rules{display:grid;gap:10px;margin-top:12px}
+        .admin-delivery-rule{display:grid;grid-template-columns:1fr 1fr 150px auto;gap:10px;align-items:end;padding:12px;border:1px solid #dfe8e2;border-radius:10px;background:#fff}
+        .admin-delivery-rule label{display:block;margin-bottom:5px;font-size:11px;font-weight:800;color:#66756b}
+        .admin-delivery-rule input{width:100%;min-height:42px;box-sizing:border-box;padding:8px 10px;border:1px solid #ced7d1;border-radius:8px;font:inherit}
+        .delivery-rule-remove{min-height:42px;padding:8px 12px;border:1px solid #dc2626;border-radius:8px;background:#fff;color:#dc2626;font:inherit;font-weight:800;cursor:pointer}
+        .admin-delivery-actions{display:flex;align-items:center;gap:14px;margin-top:20px}
+        .admin-delivery-save{min-height:46px;padding:10px 20px;border:1px solid #16803c;border-radius:10px;background:#16803c;color:#fff;font:inherit;font-weight:800;cursor:pointer}
+        .admin-delivery-save:disabled{opacity:.65;cursor:wait}
+        .admin-delivery-add-rule{min-height:42px;padding:9px 14px;border:1px solid #16803c;border-radius:9px;background:#fff;color:#16803c;font:inherit;font-weight:800;cursor:pointer}
+        @media(max-width:760px){
+            .admin-delivery-card{padding:17px;border-radius:14px}
+            .admin-delivery-grid{grid-template-columns:1fr;gap:13px}
+            .admin-delivery-field.full{grid-column:auto}
+            .admin-delivery-rule{grid-template-columns:1fr}
+            .delivery-rule-remove{width:100%}
+            .admin-delivery-actions{flex-direction:column;align-items:stretch}
+            .admin-delivery-save{width:100%}
+        }
+
+
+        /* =========================================
+           MENU ADMINISTRATIVO — DESKTOP
+           No computador a barra lateral fica visível.
+        ========================================== */
+        @media (min-width: 761px) {
+            .admin-sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: auto;
+                width: 260px;
+                height: 100vh;
+                transform: translateX(0);
+                z-index: 9999;
+                overflow-y: auto;
+                border-left: none;
+                border-right: 1px solid #343a40;
+            }
+
+            .admin-main {
+                margin-left: 260px !important;
+            }
+
+            .admin-menu-button {
+                display: none;
+            }
+
+            .admin-menu-overlay {
+                display: none;
+            }
+
+            .admin-header {
+                padding-left: 20px;
+            }
+        }
+
+
+        /* =========================================
+           RODAPÉ DO SITE — ADMIN
+        ========================================== */
+        .admin-footer-card{margin-top:20px;padding:24px;background:#fff;border:1px solid #dbe3e8;border-radius:16px;box-shadow:0 8px 24px rgba(20,35,45,.06)}
+        .admin-footer-section-title{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px}.admin-footer-section-title>span{display:flex;align-items:center;justify-content:center;min-width:32px;height:32px;border-radius:50%;background:#eaf7ef;color:#16803c;font-weight:900}.admin-footer-section-title h3{margin:0;color:#17351f;font-size:20px}.admin-footer-section-title p{margin:5px 0 0;color:#66756b;font-size:14px;line-height:1.5}
+        .admin-footer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.admin-footer-field{min-width:0}.admin-footer-field.full{grid-column:1/-1}.admin-footer-field label{display:block;margin-bottom:7px;color:#26352e;font-size:13px;font-weight:800}.admin-footer-field input,.admin-footer-field textarea,.admin-footer-column-editor input,.footer-link-row input,.footer-social-row input{width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid #ced7d1;border-radius:9px;background:#fbfdfb;color:#18251f;font:inherit;outline:none}.admin-footer-field textarea{resize:vertical}.admin-footer-field input:focus,.admin-footer-field textarea:focus,.admin-footer-column-editor input:focus,.footer-link-row input:focus,.footer-social-row input:focus{background:#fff;border-color:#16803c;box-shadow:0 0 0 4px rgba(22,128,60,.08)}
+        .admin-footer-columns-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.admin-footer-column-editor{padding:16px;border:1px solid #dfe8e2;border-radius:12px;background:#f8fbf9}.admin-footer-column-editor h4{margin:0 0 10px;color:#17351f}.admin-footer-column-editor>input{margin-bottom:10px}.footer-link-row{display:grid;grid-template-columns:1fr 1.35fr;gap:8px;margin-top:8px}.admin-footer-social-grid{display:grid;gap:10px}.footer-social-row{display:grid;grid-template-columns:110px 1fr auto;align-items:center;gap:10px;padding:10px;border:1px solid #dfe8e2;border-radius:10px;background:#fbfdfb}.footer-social-row b{color:#17351f}.footer-social-row label{white-space:nowrap;font-size:13px;font-weight:700}.footer-social-row input[type=checkbox]{width:17px;height:17px;accent-color:#16803c;vertical-align:middle}.admin-footer-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.admin-footer-media-grid>div{padding:16px;border:1px solid #dfe8e2;border-radius:12px;background:#fbfdfb}.admin-footer-media-grid h4{margin:0 0 12px;color:#17351f}.admin-footer-media-preview{display:block;max-width:100%;width:100%;height:100px;object-fit:contain;background:#fff;border:1px solid #e5e7eb;border-radius:8px}.admin-footer-actions{display:flex;align-items:center;gap:14px;margin:20px 0}.admin-footer-actions .form-message{margin-right:auto}.admin-footer-save{min-height:46px;padding:10px 20px;border:1px solid #16803c;border-radius:10px;background:#16803c;color:#fff;font:inherit;font-weight:800;cursor:pointer}.admin-footer-save:disabled{opacity:.65;cursor:wait}
+        @media(max-width:760px){.admin-footer-card{padding:17px;border-radius:14px}.admin-footer-grid,.admin-footer-columns-grid,.admin-footer-media-grid{grid-template-columns:1fr}.admin-footer-field.full{grid-column:auto}.footer-link-row,.footer-social-row{grid-template-columns:1fr}.admin-footer-actions{flex-direction:column;align-items:stretch}.admin-footer-actions .form-message{margin-right:0}.admin-footer-save{width:100%}}
+
+    
+/* ============================================================
+   CASAFORT — NOVOS DESTAQUES E OFERTAS
+   ============================================================ */
+.product-home-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+}
+.admin-offer-percent-wrap {
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.admin-offer-percent-wrap label {
+    font-weight: 700;
+    color: #26352e;
+    font-size: 13px;
+}
+.admin-offer-percent-wrap input {
+    width: 120px;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #cddbd2;
+    border-radius: 9px;
+}
+.admin-offer-percent-wrap small {
+    max-width: 330px;
+    color: #78847e;
+    font-size: 11px;
+    line-height: 1.45;
+}
+.admin-offer-percent-wrap input:not(:disabled):focus {
+    outline: none;
+    border-color: #d73535;
+    box-shadow: 0 0 0 3px rgba(215,53,53,.10);
+}
+.admin-marketing-grid-10 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.admin-marketing-banner-field {
+    padding: 16px;
+    border: 1px solid #e1e7e3;
+    border-radius: 14px;
+    background: #fbfcfb;
+}
+.admin-marketing-sub-label {
+    display: block;
+    margin-top: 11px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #526159;
+}
+.admin-marketing-category {
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 11px;
+    border: 1px solid #cddbd2;
+    border-radius: 9px;
+    background: #fff;
+    color: #26352e;
+}
+@media (max-width: 760px) {
+    .product-home-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .admin-marketing-grid-10 {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+</head>
+
+
+<body class="admin-body">
+
+
+    <!-- =========================================
+         CABEÇALHO
+    ========================================== -->
+
+    <header class="admin-header">
+
+        <div class="admin-header-left">
+
+            <a
+                href="#dashboard"
+                class="admin-logo"
+            >
+                Minha Empresa
+            </a>
+
+        </div>
+
+
+        <!-- ÁREA DIREITA -->
+
+        <div class="admin-header-right">
+
+            <span class="admin-user-label">
+                Administrador
+            </span>
+
+            <button
+                type="button"
+                id="adminLogoutButton"
+                class="admin-logout-button"
+            >
+                Sair
+            </button>
+
+
+            <!-- MENU HAMBÚRGUER -->
+
+            <button
+                type="button"
+                id="adminMenuButton"
+                class="admin-menu-button"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+            >
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================
+         FUNDO DO MENU
+    ========================================== -->
+
+    <div
+        id="adminMenuOverlay"
+        class="admin-menu-overlay"
+    ></div>
+
+
+
+    <!-- =========================================
+         MENU LATERAL
+    ========================================== -->
+
+    <aside
+        id="adminSidebar"
+        class="admin-sidebar"
+    >
+
+        <div class="admin-sidebar-header">
+
+            <div>
+
+                <span class="admin-sidebar-label">
+                    ADMINISTRAÇÃO
+                </span>
+
+                <strong>
+                    Painel de Controle
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- MENU -->
+
+        <nav class="admin-sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="#dashboard"
+                class="admin-nav-link active"
+                data-section="dashboard"
+            >
+
+                <span class="admin-nav-icon">
+                    🏠
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+
+            <!-- CLIENTES -->
+
+            <a
+                href="#clientes"
+                class="admin-nav-link"
+                data-section="clientes"
+            >
+
+                <span class="admin-nav-icon">
+                    👥
+                </span>
+
+                <span>
+                    Clientes cadastrados
+                </span>
+
+            </a>
+
+
+
+            <!-- CADASTRAR PRODUTOS -->
+
+<a
+    href="#cadastrar-produtos"
+    class="admin-nav-link"
+    data-section="cadastrar-produtos"
+>
+
+    <span class="admin-nav-icon">
+        ➕
+    </span>
+
+    <span>
+        Cadastrar produtos
+    </span>
+
+</a>
+
+
+<!-- PRODUTOS -->
+
+<a
+    href="#produtos"
+    class="admin-nav-link"
+    data-section="produtos"
+>
+
+    <span class="admin-nav-icon">
+        📦
+    </span>
+
+    <span>
+        Produtos
+    </span>
+
+</a>
+
+
+            <!-- PEDIDOS -->
+
+            <a
+                href="#pedidos"
+                class="admin-nav-link"
+                data-section="pedidos"
+            >
+
+                <span class="admin-nav-icon">
+                    🛒
+                </span>
+
+                <span>
+                    Pedidos
+                </span>
+
+            </a>
+
+
+
+            <!-- MARKETING -->
+            <a
+                href="#marketing"
+                class="admin-nav-link"
+                data-section="marketing"
+            >
+                <span class="admin-nav-icon">
+                    📣
+                </span>
+                <span>
+                    Marketink
+                </span>
+            </a>
+
+
+
+            <!-- RODAPÉ -->
+            <a
+                href="#rodape"
+                class="admin-nav-link"
+                data-section="rodape"
+            >
+                <span class="admin-nav-icon">🧩</span>
+                <span>Rodapé</span>
+            </a>
+
+            <div class="admin-nav-divider"></div>
+
+
+
+            <!-- FRETE -->
+
+            <a
+                href="#configuracoes"
+                class="admin-nav-link"
+                data-section="configuracoes"
+            >
+
+                <span class="admin-nav-icon">
+                    🚚
+                </span>
+
+                <span>
+                    Frete
+                </span>
+
+            </a>
+
+        </nav>
+
+
+
+        <!-- STATUS -->
+
+        <div class="admin-sidebar-status">
+
+            <span class="admin-status-dot"></span>
+
+            <div>
+
+                <strong>
+                    Sistema online
+                </strong>
+
+                <small>
+                    Proteção ativa
+                </small>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =========================================
+         CONTEÚDO PRINCIPAL
+    ========================================== -->
+
+    <main class="admin-main">
+
+
+        <div class="admin-container">
+
+
+            <!-- =================================
+                 DASHBOARD
+            ================================== -->
+
+            <section
+                id="dashboard"
+                class="admin-page-section active-section"
+            >
+
+                <div class="admin-page-heading">
+
+                    <div>
+
+                        <span class="admin-page-tag">
+                            PAINEL ADMINISTRATIVO
+                        </span>
+
+                        <h1>
+                            Dashboard
+                        </h1>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ESTATÍSTICAS -->
+
+                <div class="admin-stats-grid">
+
+
+                    <!-- CLIENTES -->
+
+                    <article class="admin-stat-card">
+
+                        <div class="admin-stat-icon">
+                            👥
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Total de clientes
+                            </span>
+
+                            <strong id="totalClients">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- PRODUTOS -->
+
+                    <article class="admin-stat-card">
+
+                        <div class="admin-stat-icon">
+                            📦
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Produtos cadastrados
+                            </span>
+
+                            <strong id="totalProducts">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- PEDIDOS -->
+
+                    <article
+                        class="admin-stat-card"
+                        id="dashboardOrdersCard"
+                        role="button"
+                        tabindex="0"
+                        title="Abrir pedidos"
+                        style="cursor:pointer;"
+                    >
+
+                        <div class="admin-stat-icon">
+                            🛒
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Pedidos
+                            </span>
+
+                            <strong id="totalOrders">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- CADASTRAR PRODUTO -->
+
+                    <article
+                        class="admin-stat-card"
+                        id="dashboardRegisterProductCard"
+                        role="button"
+                        tabindex="0"
+                        title="Abrir cadastro de produtos"
+                        style="cursor:pointer;"
+                    >
+
+                        <div class="admin-stat-icon">
+                            ➕
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Cadastrar produto
+                            </span>
+
+                            <strong>
+                                +
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+
+
+
+
+                                    <!-- MARKETINK -->
+                    <article
+                        class="admin-stat-card"
+                        id="dashboardMarketingCard"
+                        role="button"
+                        tabindex="0"
+                        title="Abrir Marketink"
+                        style="cursor:pointer;"
+                    >
+                        <div class="admin-stat-icon">
+                            📣
+                        </div>
+
+                        <div>
+                            <span>
+                                Marketink
+                            </span>
+
+                            <strong>
+                                →
+                            </strong>
+                        </div>
+                    </article>
+
+
+
+
+                    <!-- RODAPÉ -->
+                    <article
+                        class="admin-stat-card"
+                        id="dashboardFooterCard"
+                        role="button"
+                        tabindex="0"
+                        title="Abrir configuração do rodapé"
+                        style="cursor:pointer;"
+                    >
+                        <div class="admin-stat-icon">🧩</div>
+                        <div>
+                            <span>Rodapé</span>
+                            <strong>Configurar →</strong>
+                        </div>
+                    </article>
+
+
+                    <!-- FRETE -->
+                    <article
+                        class="admin-stat-card"
+                        id="dashboardDeliveryCard"
+                        role="button"
+                        tabindex="0"
+                        title="Abrir configuração de frete"
+                        style="cursor:pointer;"
+                    >
+                        <div class="admin-stat-icon">
+                            🚚
+                        </div>
+
+                        <div>
+                            <span>
+                                Frete
+                            </span>
+
+                            <strong>
+                                Configurar entrega →
+                            </strong>
+                        </div>
+                    </article>
+
+
+
+</div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 CLIENTES
+            ================================== -->
+
+            <section
+                id="clientes"
+                class="admin-page-section"
+            >
+
+                <div class="admin-section-heading">
+
+                    <div>
+
+                        <span>
+                            GERENCIAMENTO
+                        </span>
+
+                        <h2>
+                            Clientes cadastrados
+                        </h2>
+
+                        <p>
+                            Consulte e gerencie todos os
+                            clientes cadastrados.
+                        </p>
+
+                    </div>
+
+
+                    <div class="admin-section-actions">
+
+                        <button
+                            type="button"
+                            class="admin-back-button"
+                            data-back-dashboard
+                        >
+                            ← Voltar
+                        </button>
+
+                        <input
+                            type="search"
+                            id="clientSearch"
+                            class="admin-search"
+                            placeholder="Pesquisar cliente..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TABELA -->
+
+                <div class="admin-table-wrapper">
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Nome
+                                </th>
+
+                                <th>
+                                    E-mail
+                                </th>
+
+                                <th>
+                                    Telefone
+                                </th>
+
+                                <th>
+                                    Cadastro
+                                </th>
+
+                                <th>
+                                    Ações
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="clientsTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="table-empty"
+                                >
+                                    Nenhum cliente cadastrado.
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+                <div
+                    id="adminMessage"
+                    class="form-message"
+                    aria-live="polite"
+                ></div>
+
+            </section>
+
+
+
+            <!-- =================================
+     CADASTRAR PRODUTOS
+================================== -->
+
+<section
+    id="cadastrar-produtos"
+    class="admin-page-section"
+>
+
+    <div class="admin-section-heading">
+
+        <div>
+
+            <span>
+                CATÁLOGO
+            </span>
+
+            <h2>
+                Cadastrar produtos
+            </h2>
+
+            <p>
+                Cadastre os produtos que serão
+                disponibilizados na vitrine da empresa.
+            </p>
+
+        </div>
+
+    
+
+        <div class="admin-section-actions">
+
+            <button
+                type="button"
+                class="admin-back-button"
+                data-back-dashboard
+            >
+                ← Voltar
+            </button>
+
+        </div>
+
+</div>
+
+
+    <!-- FORMULÁRIO -->
+
+    <div class="admin-product-form-card">
+
+        <div class="admin-form-header">
+
+            <div>
+
+                <span>
+                    NOVO PRODUTO
+                </span>
+
+                <h3>
+                    Informações do produto
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <form
+            id="productForm"
+            class="admin-product-form"
+            autocomplete="off"
+        >
+
+
+            <!-- TÍTULO -->
+
+            <div class="admin-form-group">
+
+                <label for="productTitle">
+                    Título do produto
+                </label>
+
+                <input
+                    type="text"
+                    id="productTitle"
+                    name="productTitle"
+                    placeholder="Ex.: Tinta Acrílica Premium 18L"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <!-- DESCRIÇÃO -->
+
+            <div class="admin-form-group">
+
+                <label for="productDescription">
+                    Descrição
+                </label>
+
+                <textarea
+                    id="productDescription"
+                    name="productDescription"
+                    rows="5"
+                    placeholder="Digite a descrição do produto..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <!-- VALOR / ESTOQUE -->
+
+            <div class="admin-form-row">
+
+                <div class="admin-form-group">
+
+                    <label for="productPrice">
+                        Valor do produto
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productPrice"
+                        name="productPrice"
+                        min="0"
+                        step="0.01"
+                        placeholder="0,00"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="admin-form-group">
+
+                    <label for="productStock">
+                        Quantidade em estoque
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productStock"
+                        name="productStock"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CATEGORIA -->
+
+            <div class="admin-form-group">
+
+                <label for="productCategory">
+                    Categoria
+                </label>
+
+                <div class="admin-category-form-row">
+
+                    <div class="admin-form-group">
+
+                        <select
+                            id="productCategory"
+                            name="productCategory"
+                            class="admin-category-select"
+                        >
+                            <option value="">
+                                Sem categoria
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="newCategoryFromProduct"
+                        class="admin-category-inline-button"
+                    >
+                        + Nova categoria
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- IMAGENS -->
+
+            <div class="admin-images-section">
+
+                <div class="admin-form-subtitle">
+
+                    <span>
+                        IMAGENS DO PRODUTO
+                    </span>
+
+                    <p>
+                        Informe até 3 links de imagens.
+                    </p>
+
+                </div>
+
+
+                <div class="admin-form-group">
+
+                    <label for="productImage1">
+                        Imagem 1
+                    </label>
+
+                    <input
+                        type="url"
+                        id="productImage1"
+                        name="productImage1"
+                        placeholder="https://exemplo.com/imagem.jpg"
+                    >
+
+                </div>
+
+
+                <div class="admin-form-group">
+
+                    <label for="productImage2">
+                        Imagem 2
+                    </label>
+
+                    <input
+                        type="url"
+                        id="productImage2"
+                        name="productImage2"
+                        placeholder="https://exemplo.com/imagem.jpg"
+                    >
+
+                </div>
+
+
+                <div class="admin-form-group">
+
+                    <label for="productImage3">
+                        Imagem 3
+                    </label>
+
+                    <input
+                        type="url"
+                        id="productImage3"
+                        name="productImage3"
+                        placeholder="https://exemplo.com/imagem.jpg"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PRÉVIA -->
+
+            <div class="admin-image-preview">
+
+                <div class="admin-form-subtitle">
+
+                    <span>
+                        PRÉVIA DAS IMAGENS
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="productImagePreview"
+                    class="admin-preview-grid"
+                >
+
+                    <div class="admin-preview-empty">
+                        As imagens aparecerão aqui.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ATIVO -->
+
+<div class="admin-product-status">
+
+    <label class="admin-checkbox-label">
+
+        <input
+            type="checkbox"
+            id="productActive"
+            name="productActive"
+            checked
+        >
+
+        <span>
+            Produto ativo na vitrine
+        </span>
+
+    </label>
+
+
+    <!-- DESTAQUES DA PÁGINA INICIAL -->
+
+    <div class="product-home-options">
+
+        <label class="admin-checkbox-label">
+
+            <input
+                type="checkbox"
+                id="productSponsored"
+                name="productSponsored"
+            >
+
+            <span>
+                Produtos Patrocinados
+            </span>
+
+        </label>
+
+
+        <label class="admin-checkbox-label">
+
+            <input
+                type="checkbox"
+                id="productMostViewed"
+                name="productMostViewed"
+            >
+
+            <span>
+                Produtos Mais Vistos
+            </span>
+
+        </label>
+
+        <label class="admin-checkbox-label">
+
+            <input
+                type="checkbox"
+                id="productYouMayLike"
+                name="productYouMayLike"
+            >
+
+            <span>
+                Você pode também gostar
+            </span>
+
+        </label>
+
+        <label class="admin-checkbox-label">
+
+            <input
+                type="checkbox"
+                id="productBestSelling"
+                name="productBestSelling"
+            >
+
+            <span>
+                Mais Vendidos
+            </span>
+
+        </label>
+
+        <label class="admin-checkbox-label admin-offer-checkbox">
+
+            <input
+                type="checkbox"
+                id="productOffer"
+                name="productOffer"
+            >
+
+            <span>
+                Ofertas
+            </span>
+
+        </label>
+
+        <div class="admin-offer-percent-wrap">
+            <label for="productOfferPercent">Desconto da oferta (%)</label>
+            <input
+                type="number"
+                id="productOfferPercent"
+                name="productOfferPercent"
+                min="1"
+                max="100"
+                step="1"
+                value="10"
+                disabled
+            >
+            <small>Informe de 1 a 100%. O percentual aparece no selo vermelho do produto.</small>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- BOTÕES -->
+
+            <div class="admin-form-actions">
+
+                <button
+                    type="reset"
+                    class="admin-button admin-button-secondary"
+                >
+                    Limpar
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="admin-button admin-button-primary"
+                >
+                    Cadastrar produto
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</section>
+
+<!-- =================================
+     PRODUTOS
+================================== -->
+
+<section
+    id="produtos"
+    class="admin-page-section"
+>
+
+    <div class="admin-section-heading">
+        <div>
+            <span>CATÁLOGO</span>
+            <h2>Produtos</h2>
+            <p>
+                Organize seus produtos por categoria e gerencie cada item com praticidade.
+            </p>
+        </div>
+
+        <div class="admin-section-actions">
+            <button
+                type="button"
+                class="admin-back-button"
+                data-back-dashboard
+            >
+                ← Voltar
+            </button>
+        </div>
+    </div>
+
+    <!-- CATEGORIAS -->
+    <div class="admin-categories-card">
+        <div class="admin-categories-header">
+            <div>
+                <h3>Categorias</h3>
+                <p>Selecione uma categoria para visualizar, editar ou excluir seus produtos.</p>
+            </div>
+            <button
+                type="button"
+                id="newCategoryButton"
+                class="admin-new-category-button"
+            >
+                + Nova categoria
+            </button>
+        </div>
+
+        <div id="adminCategoriesList" class="admin-categories-list">
+            <div class="admin-category-empty">
+                Carregando categorias...
+            </div>
+        </div>
+
+        <div
+            id="adminCategoryProducts"
+            class="admin-category-products"
+            style="display:none;"
+        >
+            <div class="admin-category-products-header">
+                <h3 id="adminCategoryProductsTitle">Produtos</h3>
+                <button
+                    type="button"
+                    id="adminCategoryBackButton"
+                    class="admin-category-back-button"
+                >
+                    ← Todas as categorias
+                </button>
+            </div>
+
+            <div class="admin-table-wrapper">
+                <table class="admin-category-products-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Valor</th>
+                            <th>Estoque</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminCategoryProductsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL NOVA CATEGORIA -->
+<div
+    id="newCategoryModal"
+    class="admin-category-modal"
+    aria-hidden="true"
+>
+    <div
+        class="admin-category-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="newCategoryModalTitle"
+    >
+        <h3 id="newCategoryModalTitle">Nova categoria</h3>
+        <p>Digite o nome da nova categoria.</p>
+        <input
+            type="text"
+            id="newCategoryName"
+            maxlength="60"
+            autocomplete="off"
+            placeholder="Ex.: Bebidas"
+        >
+        <div
+            id="newCategoryMessage"
+            class="form-message"
+            aria-live="polite"
+        ></div>
+        <div class="admin-category-modal-actions">
+            <button
+                type="button"
+                id="cancelNewCategory"
+                class="admin-category-modal-cancel"
+            >
+                Cancelar
+            </button>
+            <button
+                type="button"
+                id="saveNewCategory"
+                class="admin-category-modal-save"
+            >
+                Criar categoria
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- =================================
+                 ESTOQUE
+            ================================== -->
+
+            <section
+                id="estoque"
+                class="admin-page-section"
+            >
+
+                <div class="admin-section-heading">
+
+                    <div>
+
+                        <span>
+                            CONTROLE
+                        </span>
+
+                        <h2>
+                            Estoque
+                        </h2>
+
+                        <p>
+                            Controle a quantidade disponível
+                            de cada produto.
+                        </p>
+
+                    </div>
+
+                    <div class="admin-section-actions">
+
+                        <button
+                            type="button"
+                            class="admin-back-button"
+                            data-back-dashboard
+                        >
+                            ← Voltar
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-placeholder-card">
+
+                    <div class="admin-placeholder-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Controle de estoque
+                    </h3>
+
+                    <p>
+                        Esta área será ligada aos produtos
+                        cadastrados e mostrará as quantidades,
+                        entradas, saídas e produtos esgotados.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 PEDIDOS
+            ================================== -->
+
+            <section
+                id="pedidos"
+                class="admin-page-section"
+            >
+
+                <div class="admin-section-heading">
+
+                    <div>
+
+                        <span>
+                            VENDAS
+                        </span>
+
+                        <h2>
+                            Pedidos
+                        </h2>
+
+                        <p>
+                            Gerencie os pedidos realizados
+                            pelos clientes.
+                        </p>
+
+                    </div>
+
+
+                    <div class="admin-section-actions">
+
+                        <button
+                            type="button"
+                            class="admin-back-button"
+                            data-back-dashboard
+                        >
+                            ← Voltar
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-placeholder-card">
+
+                    <div class="admin-placeholder-icon">
+                        🛒
+                    </div>
+
+                    <h3>
+                        Pedidos
+                    </h3>
+
+                    <p>
+                        A área de pedidos será implementada
+                        posteriormente.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 MARKETINK / PUBLICIDADE
+            ================================== -->
+
+            <section
+                id="marketing"
+                class="admin-page-section"
+            >
+                <div class="admin-section-heading">
+                    <div>
+                        <span>PUBLICIDADE</span>
+                        <h2>Marketink</h2>
+                        <p>
+                            Cadastre até 10 banners em cada posição. Em cada banner você informa a imagem e a categoria que será aberta quando o cliente tocar ou clicar.
+                        </p>
+                    </div>
+
+                    <div class="admin-section-actions">
+                        <button type="button" class="admin-back-button" data-back-dashboard>← Voltar</button>
+                    </div>
+                </div>
+
+                <div class="admin-marketing-card">
+                    <div class="admin-marketing-header">
+                        <div>
+                            <h3>Publicidade 1</h3>
+                            <p>Banners exibidos abaixo de <strong>Produtos Patrocinados</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="admin-marketing-grid admin-marketing-grid-10">
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_1">Banner 1 — imagem</label>
+                            <input id="marketingPublicidade1_1" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="0">
+                            <label for="marketingPublicidade1Category_1" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_1" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="0">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_2">Banner 2 — imagem</label>
+                            <input id="marketingPublicidade1_2" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="1">
+                            <label for="marketingPublicidade1Category_2" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_2" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="1">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_3">Banner 3 — imagem</label>
+                            <input id="marketingPublicidade1_3" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="2">
+                            <label for="marketingPublicidade1Category_3" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_3" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="2">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_4">Banner 4 — imagem</label>
+                            <input id="marketingPublicidade1_4" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="3">
+                            <label for="marketingPublicidade1Category_4" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_4" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="3">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_5">Banner 5 — imagem</label>
+                            <input id="marketingPublicidade1_5" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="4">
+                            <label for="marketingPublicidade1Category_5" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_5" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="4">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_6">Banner 6 — imagem</label>
+                            <input id="marketingPublicidade1_6" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="5">
+                            <label for="marketingPublicidade1Category_6" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_6" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="5">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_7">Banner 7 — imagem</label>
+                            <input id="marketingPublicidade1_7" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="6">
+                            <label for="marketingPublicidade1Category_7" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_7" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="6">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_8">Banner 8 — imagem</label>
+                            <input id="marketingPublicidade1_8" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="7">
+                            <label for="marketingPublicidade1Category_8" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_8" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="7">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_9">Banner 9 — imagem</label>
+                            <input id="marketingPublicidade1_9" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="8">
+                            <label for="marketingPublicidade1Category_9" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_9" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="8">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade1_10">Banner 10 — imagem</label>
+                            <input id="marketingPublicidade1_10" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade1" data-marketing-index="9">
+                            <label for="marketingPublicidade1Category_10" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade1Category_10" class="admin-marketing-category" data-marketing-category-slot="publicidade1" data-marketing-category-index="9">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-marketing-card">
+                    <div class="admin-marketing-header">
+                        <div>
+                            <h3>Publicidade 2</h3>
+                            <p>Banners exibidos abaixo de <strong>Produtos Mais Vistos</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="admin-marketing-grid admin-marketing-grid-10">
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_1">Banner 1 — imagem</label>
+                            <input id="marketingPublicidade2_1" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="0">
+                            <label for="marketingPublicidade2Category_1" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_1" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="0">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_2">Banner 2 — imagem</label>
+                            <input id="marketingPublicidade2_2" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="1">
+                            <label for="marketingPublicidade2Category_2" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_2" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="1">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_3">Banner 3 — imagem</label>
+                            <input id="marketingPublicidade2_3" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="2">
+                            <label for="marketingPublicidade2Category_3" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_3" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="2">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_4">Banner 4 — imagem</label>
+                            <input id="marketingPublicidade2_4" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="3">
+                            <label for="marketingPublicidade2Category_4" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_4" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="3">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_5">Banner 5 — imagem</label>
+                            <input id="marketingPublicidade2_5" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="4">
+                            <label for="marketingPublicidade2Category_5" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_5" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="4">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_6">Banner 6 — imagem</label>
+                            <input id="marketingPublicidade2_6" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="5">
+                            <label for="marketingPublicidade2Category_6" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_6" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="5">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_7">Banner 7 — imagem</label>
+                            <input id="marketingPublicidade2_7" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="6">
+                            <label for="marketingPublicidade2Category_7" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_7" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="6">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_8">Banner 8 — imagem</label>
+                            <input id="marketingPublicidade2_8" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="7">
+                            <label for="marketingPublicidade2Category_8" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_8" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="7">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_9">Banner 9 — imagem</label>
+                            <input id="marketingPublicidade2_9" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="8">
+                            <label for="marketingPublicidade2Category_9" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_9" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="8">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                        <div class="admin-marketing-field admin-marketing-banner-field">
+                            <label for="marketingPublicidade2_10">Banner 10 — imagem</label>
+                            <input id="marketingPublicidade2_10" type="url" inputmode="url" autocomplete="off" placeholder="https://..." data-marketing-slot="publicidade2" data-marketing-index="9">
+                            <label for="marketingPublicidade2Category_10" class="admin-marketing-sub-label">Categoria ao clicar</label>
+                            <select id="marketingPublicidade2Category_10" class="admin-marketing-category" data-marketing-category-slot="publicidade2" data-marketing-category-index="9">
+                                <option value="">Sem categoria</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-marketing-actions">
+                    <span id="marketingMessage" class="form-message" aria-live="polite"></span>
+                    <button id="saveMarketingButton" type="button" class="admin-marketing-save-button">Salvar banners</button>
+                </div>
+            </section>
+
+
+            <!-- =================================
+                 RODAPÉ DO SITE
+            ================================== -->
+            <section id="rodape" class="admin-page-section">
+                <div class="admin-section-heading">
+                    <div>
+                        <span>SITE DO CLIENTE</span>
+                        <h2>Configuração do Rodapé</h2>
+                        <p>Preencha os dados abaixo. Depois de salvar, as informações ficam disponíveis para o rodapé público do site.</p>
+                    </div>
+                    <div class="admin-section-actions">
+                        <button type="button" class="admin-back-button" data-back-dashboard>← Voltar</button>
+                    </div>
+                </div>
+
+                <div class="admin-footer-card">
+                    <div class="admin-footer-section-title"><span>1</span><div><h3>Identidade</h3><p>Informações principais exibidas no rodapé.</p></div></div>
+                    <div class="admin-footer-grid">
+                        <div class="admin-footer-field"><label for="footerLogo">Logo do rodapé (URL da imagem)</label><input id="footerLogo" type="url" placeholder="https://..."></div>
+                        <div class="admin-footer-field"><label for="footerSiteName">Nome da empresa/site</label><input id="footerSiteName" type="text" placeholder="Nome da empresa"></div>
+                        <div class="admin-footer-field full"><label for="footerDescription">Descrição curta</label><textarea id="footerDescription" rows="3" placeholder="Uma breve descrição da empresa..."></textarea></div>
+                        <div class="admin-footer-field"><label for="footerCopyright">Ano / texto de copyright</label><input id="footerCopyright" type="text" placeholder="© {ano} Nome do Site — Todos os direitos reservados."></div>
+                    </div>
+                </div>
+
+                <div class="admin-footer-card">
+                    <div class="admin-footer-section-title"><span>2</span><div><h3>Colunas de links</h3><p>Os nomes dos links aparecem no cliente. As URLs ficam somente no destino do clique. Contatos e horário são tratados automaticamente.</p></div></div>
+                    <div class="admin-footer-columns-grid">
+                        <div class="admin-footer-column-editor"><h4>Coluna 1</h4><input id="footerCol1Title" placeholder="Institucional"><div class="footer-link-row"><input id="footerCol1Label1" placeholder="Sobre nós"><input id="footerCol1Url1" type="url" placeholder="URL"></div><div class="footer-link-row"><input id="footerCol1Label2" placeholder="Contato"><input id="footerCol1Url2" type="url" placeholder="URL"></div><div class="footer-link-row"><input id="footerCol1Label3" placeholder="Política de Privacidade"><input id="footerCol1Url3" type="url" placeholder="URL"></div><div class="footer-link-row"><input id="footerCol1Label4" placeholder="Termos de Uso"><input id="footerCol1Url4" type="url" placeholder="URL"></div></div>
+                        <div class="admin-footer-column-editor"><h4>Coluna 2</h4><input id="footerCol2Title" placeholder="Atendimento"><div class="footer-link-row"><input id="footerCol2Label1" placeholder="WhatsApp"><input id="footerCol2Url1" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex.: 85987369055"></div><div class="footer-link-row"><input id="footerCol2Label2" placeholder="Telefone"><input id="footerCol2Url2" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex.: 08000525786"></div><div class="footer-link-row"><input id="footerCol2Label3" placeholder="E-mail"><input id="footerCol2Url3" type="email" inputmode="email" autocomplete="email" placeholder="Ex.: casafort@gmail.com"></div><div class="footer-link-row"><input id="footerCol2Label4" placeholder="Horário de atendimento"><input id="footerCol2Url4" type="text" inputmode="text" placeholder="Ex.: 08:00 às 18:00"></div></div>
+                        <div class="admin-footer-column-editor"><h4>Coluna 3</h4><input id="footerCol3Title" placeholder="Links"><div class="footer-link-row"><input id="footerCol3Label1" placeholder="Blog"><input id="footerCol3Url1" type="url" placeholder="URL"></div><div class="footer-link-row"><input id="footerCol3Label2" placeholder="Serviços"><input id="footerCol3Url2" type="url" placeholder="URL"></div><div class="footer-link-row"><input id="footerCol3Label3" placeholder="Produtos"><input id="footerCol3Url3" type="url" placeholder="URL"></div><div class="footer-link-row"><input id="footerCol3Label4" placeholder="FAQ"><input id="footerCol3Url4" type="url" placeholder="URL"></div></div>
+                    </div>
+                </div>
+
+                <div class="admin-footer-card">
+                    <div class="admin-footer-section-title"><span>3</span><div><h3>Redes sociais</h3><p>O ícone só aparece no site quando o administrador informar um link. Os ícones têm tamanho uniforme e ficam responsivos.</p></div></div>
+                    <div class="admin-footer-social-grid">
+                        <div class="footer-social-row"><b>Instagram</b><input id="footerInstagram" type="url" placeholder="https://instagram.com/..."><label><input id="footerInstagramEnabled" type="checkbox" checked> Exibir</label></div>
+                        <div class="footer-social-row"><b>TikTok</b><input id="footerTiktok" type="url" placeholder="https://tiktok.com/..."><label><input id="footerTiktokEnabled" type="checkbox" checked> Exibir</label></div>
+                        <div class="footer-social-row"><b>YouTube</b><input id="footerYoutube" type="url" placeholder="https://youtube.com/..."><label><input id="footerYoutubeEnabled" type="checkbox" checked> Exibir</label></div>
+                        <div class="footer-social-row"><b>Pinterest</b><input id="footerPinterest" type="url" placeholder="https://pinterest.com/..."><label><input id="footerPinterestEnabled" type="checkbox" checked> Exibir</label></div>
+                        <div class="footer-social-row"><b>Facebook</b><input id="footerFacebook" type="url" placeholder="https://facebook.com/..."><label><input id="footerFacebookEnabled" type="checkbox" checked> Exibir</label></div>
+                        <div class="footer-social-row"><b>WhatsApp</b><input id="footerWhatsapp" type="url" placeholder="https://wa.me/..."><label><input id="footerWhatsappEnabled" type="checkbox" checked> Exibir</label></div>
+                        <div class="footer-social-row"><b>Telegram</b><input id="footerTelegram" type="url" placeholder="https://t.me/..."><label><input id="footerTelegramEnabled" type="checkbox" checked> Exibir</label></div>
+                    </div>
+                </div>
+
+                <div class="admin-footer-card">
+                    <div class="admin-footer-section-title"><span>4</span><div><h3>Informações legais</h3><p>Dados empresariais apresentados de forma organizada.</p></div></div>
+                    <div class="admin-footer-grid">
+                        <div class="admin-footer-field"><label for="footerCnpj">CNPJ</label><input id="footerCnpj" type="text"></div>
+                        <div class="admin-footer-field"><label for="footerRazaoSocial">Razão social</label><input id="footerRazaoSocial" type="text"></div>
+                        <div class="admin-footer-field"><label for="footerAddress">Endereço</label><input id="footerAddress" type="text"></div>
+                        <div class="admin-footer-field"><label for="footerCityState">Cidade / Estado</label><input id="footerCityState" type="text"></div>
+                        <div class="admin-footer-field full"><label for="footerLegalText">Texto legal</label><textarea id="footerLegalText" rows="3" placeholder="Informações legais adicionais..."></textarea></div>
+                    </div>
+                </div>
+
+                <div class="admin-footer-card">
+                    <div class="admin-footer-section-title"><span>5</span><div><h3>Rodapé inferior</h3><p>Texto final exibido abaixo das demais informações.</p></div></div>
+                    <div class="admin-footer-grid">
+                        <div class="admin-footer-field full"><label for="footerBottomText">Texto inferior</label><input id="footerBottomText" type="text" placeholder="© 2026 Nome do Site — Todos os direitos reservados."></div>
+                        <div class="admin-footer-field full"><label for="footerDeveloperText">Desenvolvido por (opcional)</label><input id="footerDeveloperText" type="text" placeholder="Desenvolvido por ..."></div>
+                    </div>
+                </div>
+
+                <div class="admin-footer-card">
+                    <div class="admin-footer-section-title"><span>+</span><div><h3>Pagamento e segurança</h3><p>Imagens fixas, apenas visuais e sem links clicáveis.</p></div></div>
+                    <div class="admin-footer-media-grid">
+                        <div><h4>Formas de pagamento</h4><img src="https://normatel.fbitsstatic.net/sf/img/pagamento.png?theme=producao&amp;v=202609081350" alt="Formas de pagamento" class="admin-footer-media-preview"></div>
+                        <div><h4>Compra 100% segura</h4><img src="https://d2r9epyceweg5n.cloudfront.net/stores/002/862/655/rte/SITE%20SEGURO.png" alt="Compra 100% segura" class="admin-footer-media-preview"></div>
+                    </div>
+                </div>
+
+                <div class="admin-footer-actions"><span id="footerMessage" class="form-message" aria-live="polite"></span><button id="saveFooterButton" type="button" class="admin-footer-save">Salvar configurações do rodapé</button></div>
+            </section>
+
+
+            <!-- =================================
+                 CONFIGURAÇÕES
+            ================================== -->
+
+            <section
+                id="configuracoes"
+                class="admin-page-section"
+            >
+
+                <div class="admin-section-heading">
+
+                    <div>
+
+                        <span>
+                            SISTEMA
+                        </span>
+
+                        <h2>
+                            Configurações
+                        </h2>
+
+                        <p>
+                            Configurações gerais do
+                            painel administrativo.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="admin-delivery-card">
+                    <div class="admin-delivery-header">
+                        <span class="admin-delivery-badge">ENTREGA</span>
+                        <h3>Configuração de frete</h3>
+                        <p>Defina o CEP de origem da loja e escolha como o frete será calculado. O painel já fica preparado para uma futura integração com os Correios.</p>
+                    </div>
+
+                    <div class="admin-delivery-grid">
+                        <div class="admin-delivery-field">
+                            <label for="deliveryOriginCep">CEP da loja / origem</label>
+                            <input id="deliveryOriginCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000">
+                            <div class="admin-delivery-help">Será usado como CEP de origem nas regras de entrega e futuramente na cotação dos Correios.</div>
+                        </div>
+
+                        <div class="admin-delivery-field">
+                            <label for="deliveryMethod">Método principal de frete</label>
+                            <select id="deliveryMethod">
+                                <option value="frete_gratis">Frete grátis</option>
+                                <option value="frete_fixo">Valor fixo</option>
+                                <option value="faixa_cep">Por faixa de CEP</option>
+                                <option value="correios">Correios / API</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="deliveryFixedBox" class="admin-delivery-method-box admin-delivery-hidden">
+                        <h4>Frete com valor fixo</h4>
+                        <div class="admin-delivery-grid">
+                            <div class="admin-delivery-field">
+                                <label for="deliveryFixedPrice">Valor do frete</label>
+                                <input id="deliveryFixedPrice" type="number" min="0" step="0.01" placeholder="0,00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="deliveryCepRulesBox" class="admin-delivery-method-box admin-delivery-hidden">
+                        <h4>Frete por faixa de CEP</h4>
+                        <div class="admin-delivery-help">Cadastre faixas de CEP e o valor correspondente. Exemplo: 01000000 até 09999999.</div>
+                        <div id="deliveryCepRules" class="admin-delivery-rules"></div>
+                        <button id="addDeliveryCepRule" type="button" class="admin-delivery-add-rule">+ Adicionar faixa</button>
+                    </div>
+
+                    <div id="deliveryCorreiosBox" class="admin-delivery-method-box admin-delivery-hidden">
+                        <h4>Correios / API</h4>
+                        <div class="admin-delivery-help">Esta área prepara o painel para receber as credenciais do cliente quando ele possuir acesso à API dos Correios. Token e credenciais não serão colocados no código do navegador.</div>
+
+                        <div class="admin-delivery-grid">
+                            <div class="admin-delivery-field">
+                                <label for="correiosPac">Código PAC</label>
+                                <input id="correiosPac" type="text" value="03298" placeholder="Código do serviço">
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label for="correiosSedex">Código SEDEX</label>
+                                <input id="correiosSedex" type="text" value="03220" placeholder="Código do serviço">
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label for="deliveryDefaultWeight">Peso padrão (g)</label>
+                                <input id="deliveryDefaultWeight" type="number" min="1" step="1" placeholder="500">
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label for="deliveryPackageType">Tipo de objeto</label>
+                                <select id="deliveryPackageType">
+                                    <option value="2">Pacote</option>
+                                    <option value="1">Envelope</option>
+                                    <option value="3">Rolo</option>
+                                </select>
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label for="deliveryLength">Comprimento (cm)</label>
+                                <input id="deliveryLength" type="number" min="1" step="0.1" placeholder="20">
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label for="deliveryWidth">Largura (cm)</label>
+                                <input id="deliveryWidth" type="number" min="1" step="0.1" placeholder="20">
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label for="deliveryHeight">Altura (cm)</label>
+                                <input id="deliveryHeight" type="number" min="1" step="0.1" placeholder="20">
+                            </div>
+                            <div class="admin-delivery-field">
+                                <label>Serviços habilitados</label>
+                                <div class="admin-delivery-switch">
+                                    <label><input id="deliveryCorreiosPacEnabled" type="checkbox" checked> PAC</label>
+                                    <label><input id="deliveryCorreiosSedexEnabled" type="checkbox" checked> SEDEX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-delivery-actions">
+                        <span id="deliveryMessage" class="form-message" aria-live="polite"></span>
+                        <button id="saveDeliveryButton" type="button" class="admin-delivery-save">Salvar configurações de entrega</button>
+                    </div>
+                </div>
+
+                <div class="admin-security-card">
+
+                    <div>
+
+                        <span>
+                            SEGURANÇA
+                        </span>
+
+                        <h3>
+                            Área administrativa protegida
+                        </h3>
+
+                        <p>
+                            O acesso administrativo é protegido
+                            pelo Firebase Authentication e pelas
+                            regras de segurança do Firestore.
+                        </p>
+
+                    </div>
+
+
+                    <div class="admin-security-status">
+
+                        <span class="admin-security-dot"></span>
+
+                        <strong>
+                            Proteção ativa
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================================
+         FIREBASE / SISTEMA
+    ========================================== -->
+
+    <script type="module" src="js/auth.js"></script>
+
+    <script type="module" src="js/admin.js"></script>
+
+    <!-- VOLTAR PARA O DASHBOARD — COMPATÍVEL COM admin.js -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("[data-back-dashboard]").forEach(function (button) {
+                if (button.dataset.backBound === "true") return;
+
+                button.dataset.backBound = "true";
+
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    document.querySelectorAll(".admin-page-section").forEach(function (section) {
+                        section.classList.remove("active-section");
+                    });
+
+                    var dashboard = document.getElementById("dashboard");
+                    if (dashboard) {
+                        dashboard.classList.add("active-section");
+                    }
+
+                    document.querySelectorAll(".admin-nav-link").forEach(function (link) {
+                        link.classList.toggle("active", link.dataset.section === "dashboard");
+                    });
+
+                    var sidebar = document.querySelector(".admin-sidebar");
+                    var overlay = document.querySelector(".admin-menu-overlay");
+                    var menuButton = document.querySelector(".admin-menu-button");
+
+                    if (sidebar) sidebar.classList.remove("open");
+                    if (overlay) overlay.classList.remove("open");
+                    if (menuButton) {
+                        menuButton.classList.remove("active");
+                        menuButton.setAttribute("aria-expanded", "false");
+                    }
+
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                });
+            });
+        });
+    </script>
+
+
+
+
+
+
+</body>
+
+</html>
