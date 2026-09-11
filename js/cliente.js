@@ -2821,8 +2821,6 @@ installmentHtml += `</div>`;
             data-offer="${offerActive ? "true" : "false"}"
         >
 
-            ${offerLineHtml}
-
             <!-- FAVORITO -->
 
             <button
@@ -2887,7 +2885,10 @@ installmentHtml += `</div>`;
 
                 </button>
 
-            </div>
+                        </div>
+
+            <!-- FAIXA DE OFERTA -->
+            ${offerLineHtml}
 
             <!-- CONTEÚDO -->
 
@@ -2916,6 +2917,7 @@ installmentHtml += `</div>`;
                 >
                     ${escapeHtml(product.nome)}
                 </button>
+
 
                 <!-- AVALIAÇÃO -->
 
@@ -2956,9 +2958,33 @@ installmentHtml += `</div>`;
                               `
                             : ""
                     }
+
                 </div>
 
 
+                <!-- PARCELAMENTO -->
+
+                ${installmentHtml}
+
+
+                <!-- ESTOQUE -->
+
+                ${
+                    stockText
+                        ? `
+                            <div
+                                style="
+                                    margin-top:5px;
+                                    margin-bottom:5px;
+                                    color:#b42318;
+                                    font-size:10px;
+                                "
+                            >
+                                ${stockText}
+                            </div>
+                          `
+                        : ""
+                }
                 <!-- PARCELAMENTO -->
 
                 ${installmentHtml}
