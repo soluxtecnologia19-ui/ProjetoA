@@ -1366,7 +1366,28 @@
                 );
         }
 
+/* ============================================================
+   CORREÇÃO — FALLBACK "SEM IMAGEM"
+   ============================================================
 
+   O atributo HTML "hidden" precisa realmente esconder
+   o texto quando a imagem do produto carregou corretamente.
+
+   O CSS .shop-product-image-placeholder usa display:grid,
+   que pode sobrescrever o comportamento visual do hidden.
+
+   Portanto, quando [hidden] estiver presente, o elemento
+   obrigatoriamente ficará invisível.
+
+   Se a imagem realmente quebrar, o JavaScript remove
+   o hidden e o "Sem imagem" volta a aparecer normalmente.
+   ============================================================ */
+
+.shop-image-fallback[hidden],
+.shop-product-image-placeholder[hidden] {
+    display:
+        none !important;
+}
         /* ============================================================
            FAVORITO
         ============================================================ */
@@ -7496,7 +7517,14 @@ img {
     font-size: 11px !important;
     background: #f4f7f5 !important;
 }
+/* ============================================================
+   CORREÇÃO — PRODUTOS RELACIONADOS
+   ESCONDE "SEM IMAGEM" QUANDO A IMAGEM EXISTE
+   ============================================================ */
 
+#productModal .casafort-related-image-placeholder[hidden] {
+    display: none !important;
+}
 #productModal .casafort-related-body {
     min-width: 0 !important;
     display: flex !important;
@@ -11984,6 +12012,34 @@ body {
         width: 112px !important;
         min-width: 112px !important;
         max-width: 112px !important;
+    }
+}
+/* ============================================================
+   CORREÇÃO — BOTÃO OFERTAS ATRÁS DA PESQUISA
+   ============================================================ */
+
+@media (min-width: 1101px) {
+
+    .shop-header-inner {
+        position: relative !important;
+    }
+
+    .shop-search {
+        position: relative !important;
+        z-index: 20 !important;
+    }
+
+    .shop-nav {
+        position: relative !important;
+        z-index: 30 !important;
+    }
+
+    #offersButton {
+        position: relative !important;
+        z-index: 31 !important;
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 </style>
