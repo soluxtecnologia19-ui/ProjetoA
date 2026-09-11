@@ -11440,6 +11440,212 @@ body {
     }
 }
 
+
+/* ============================================================
+   CASAFORT — NAVEGAÇÃO FINAL MOBILE / TABLET
+   Compatível com Chrome, Safari e WebViews de Facebook/Instagram.
+   ============================================================ */
+
+@media (max-width: 900px) {
+    html, body {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .casafort-bottom-nav {
+        display: grid !important;
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 70px !important;
+        z-index: 15000 !important;
+        pointer-events: auto !important;
+        padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        background: rgba(255,255,255,.985) !important;
+        border-top: 1px solid #dfe6e2 !important;
+        box-shadow: 0 -6px 22px rgba(20,45,33,.10) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        backdrop-filter: blur(16px) !important;
+    }
+
+    .casafort-bottom-item {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 62px !important;
+        margin: 0 !important;
+        padding: 5px 2px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-direction: column !important;
+        gap: 3px !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        background: transparent !important;
+        color: #4f5854 !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        line-height: 1.1 !important;
+        text-align: center !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        touch-action: manipulation !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+
+    .casafort-bottom-item:active {
+        transform: scale(.97);
+        background: #f2f7f4 !important;
+    }
+
+    .casafort-bottom-item.active {
+        color: var(--cf-green, #167a4a) !important;
+        background: #f1f8f4 !important;
+    }
+
+    .casafort-bottom-icon {
+        width: 29px !important;
+        height: 29px !important;
+        display: grid !important;
+        place-items: center !important;
+        flex: 0 0 29px !important;
+        pointer-events: none !important;
+    }
+
+    .casafort-bottom-icon svg {
+        width: 27px !important;
+        height: 27px !important;
+        display: block !important;
+    }
+
+    .casafort-bottom-icon b {
+        pointer-events: none !important;
+    }
+
+    /* Não deixa a barra do navegador/WebView comprimir a navegação. */
+    body {
+        padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    body.casafort-cart-open {
+        padding-bottom: 0 !important;
+    }
+
+    body.casafort-cart-open .casafort-bottom-nav {
+        display: none !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .casafort-bottom-nav {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    .casafort-bottom-item {
+        font-size: 10px !important;
+    }
+}
+
+/* LOGO: área clicável clara e sem sobreposição. */
+#brandHome {
+    position: relative !important;
+    z-index: 30 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+#brandHome .shop-brand-logo {
+    pointer-events: none !important;
+}
+
+/* ============================================================
+   BANNERS PROMOCIONAIS — MAIS IMPACTO NO CELULAR
+   ============================================================ */
+@media (max-width: 900px) {
+    .casafort-promotion-space {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        overflow: visible !important;
+    }
+
+    .casafort-promotion-track {
+        width: 100% !important;
+        display: flex !important;
+        gap: 12px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 2px 12px 10px !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-x !important;
+        overscroll-behavior-x: contain !important;
+        scrollbar-width: none !important;
+    }
+
+    .casafort-promotion-track::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .casafort-promotion-card,
+    .casafort-promotion-card:hover {
+        flex: 0 0 calc(100vw - 24px) !important;
+        width: calc(100vw - 24px) !important;
+        min-width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        height: auto !important;
+        aspect-ratio: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 16px !important;
+        background: transparent !important;
+        box-shadow: 0 8px 24px rgba(20,45,33,.10) !important;
+        overflow: hidden !important;
+        scroll-snap-align: center !important;
+        transform: none !important;
+    }
+
+    .casafort-promotion-card img {
+        width: 100% !important;
+        height: auto !important;
+        min-width: 100% !important;
+        max-width: none !important;
+        display: block !important;
+        object-fit: contain !important;
+        object-position: center !important;
+        border-radius: 16px !important;
+        background: #fff !important;
+    }
+
+    .casafort-promotion-arrow {
+        z-index: 25 !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .casafort-promotion-track {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .casafort-promotion-card,
+    .casafort-promotion-card:hover {
+        flex-basis: calc(100vw - 16px) !important;
+        width: calc(100vw - 16px) !important;
+        min-width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+    }
+}
+
 </style>
 
 </head>
@@ -11459,7 +11665,7 @@ body {
             <!-- MARCA -->
 
             <a
-    href="#"
+    href="./cliente.html"
     id="brandHome"
     class="shop-brand"
     aria-label="Ir para a vitrine"
