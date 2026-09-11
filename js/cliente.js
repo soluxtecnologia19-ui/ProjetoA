@@ -7917,6 +7917,7 @@ function hideAllSections() {
 function showStore() {
 
     hideAllSections();
+    setBottomNavigationActive("store");
 
 
     if (storeSection) {
@@ -7990,6 +7991,7 @@ function showOffers(pushHistory = true) {
 function showFavorites() {
 
     hideAllSections();
+    setBottomNavigationActive("favorites");
 
 
     if (favoritesSection) {
@@ -8023,6 +8025,7 @@ function showFavorites() {
 function showProfile() {
 
     hideAllSections();
+    setBottomNavigationActive("account");
 
 
     if (profileSection) {
@@ -8056,6 +8059,7 @@ function showProfile() {
 async function showOrders() {
 
     hideAllSections();
+    setBottomNavigationActive("orders");
 
 
     if (ordersSection) {
@@ -8155,6 +8159,146 @@ function toggleMobileMenu() {
         closeMobileMenu();
     }
 }
+
+
+/* ============================================================
+   NAVEGAÇÃO INFERIOR — MOBILE / TABLET
+   Os botões do HTML usam data-bottom-action.
+   Este listener é deliberadamente delegado no document para
+   continuar funcionando mesmo quando seções são redesenhadas.
+   ============================================================ */
+
+function setBottomNavigationActive(action) {
+    const items = document.querySelectorAll(
+        ".casafort-bottom-item[data-bottom-action]"
+    );
+
+    items.forEach(item => {
+        item.classList.toggle(
+            "active",
+            item.dataset.bottomAction === action
+        );
+    });
+}
+
+function goToHomeStore() {
+    /* Fecha qualquer camada que possa impedir o toque seguinte. */
+    closeMobileMenu();
+
+    if (productModal && !productModal.hidden) {
+        closeProductDetails(true);
+    }
+
+    if (cartDrawer && !cartDrawer.hidden) {
+        closeCart();
+    }
+
+    selectedCategoryId = "";
+    filteredProducts = [...allProducts];
+
+    try {
+        const url = new URL(window.location.href);
+        url.hash = "";
+        url.searchParams.delete("ofertas");
+
+        window.history.replaceState(
+            {
+                ...(window.history.state || {}),
+                casafortOffers: false,
+                casafortProduct: null
+            },
+            "",
+            `${url.pathname}${url.search}${url.hash}`
+        );
+    } catch (error) {
+        console.warn(
+            "Não foi possível limpar o estado da página inicial.",
+            error
+        );
+    }
+
+    showStore();
+    renderHomeProducts();
+    renderCategoryItems();
+    renderCategoryStrip();
+    renderProducts();
+    updateCategoryPage("");
+
+    setBottomNavigationActive("store");
+}
+
+document.addEventListener("click", async event => {
+    const item = event.target.closest(
+        ".casafort-bottom-item[data-bottom-action]"
+    );
+
+    if (!item) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const action = item.dataset.bottomAction;
+
+    try {
+        if (action === "store") {
+            goToHomeStore();
+            return;
+        }
+
+        if (action === "favorites") {
+            if (productModal && !productModal.hidden) {
+                closeProductDetails(true);
+            }
+            if (cartDrawer && !cartDrawer.hidden) {
+                closeCart();
+            }
+            showFavorites();
+            setBottomNavigationActive("favorites");
+            return;
+        }
+
+        if (action === "cart") {
+            closeMobileMenu();
+            setBottomNavigationActive("cart");
+            openCart();
+            return;
+        }
+
+        if (action === "orders") {
+            if (productModal && !productModal.hidden) {
+                closeProductDetails(true);
+            }
+            if (cartDrawer && !cartDrawer.hidden) {
+                closeCart();
+            }
+            setBottomNavigationActive("orders");
+            await showOrders();
+            return;
+        }
+
+        if (action === "account") {
+            if (productModal && !productModal.hidden) {
+                closeProductDetails(true);
+            }
+            if (cartDrawer && !cartDrawer.hidden) {
+                closeCart();
+            }
+            showProfile();
+            setBottomNavigationActive("account");
+        }
+    } catch (error) {
+        console.error(
+            "Erro na navegação inferior:",
+            error
+        );
+    }
+}, false);
+
+/* Ao voltar para a vitrine, mantém o botão Início destacado. */
+document.addEventListener("casafort:navigation", event => {
+    const action = event.detail?.action;
+    if (action) setBottomNavigationActive(action);
+});
 
 
 /* ============================================================
@@ -9524,54 +9668,31 @@ if (logoutButton) {
 const brandHome =
     $("brandHome");
 
-
 if (brandHome) {
-
     brandHome.addEventListener(
         "click",
         event => {
-
+            /*
+             * O href="./cliente.html" é o fallback nativo.
+             * Quando o JS está ativo, a navegação é feita sem
+             * perder o estado da vitrine já carregada.
+             */
             event.preventDefault();
+            event.stopPropagation();
 
-            if (productModal && !productModal.hidden) {
-                closeProductDetails(true);
-            }
-
-            selectedCategoryId = "";
-            filteredProducts = [...allProducts];
-
-            try {
-                const url = new URL(window.location.href);
-                url.hash = "";
-                url.searchParams.delete("ofertas");
-
-                window.history.replaceState(
-                    {
-                        ...(window.history.state || {}),
-                        casafortOffers: false,
-                        casafortProduct: null
-                    },
-                    "",
-                    `${url.pathname}${url.search}${url.hash}`
-                );
-            } catch (error) {
-                console.warn(
-                    "Não foi possível limpar o estado da navegação inicial.",
-                    error
-                );
-            }
-
-            showStore();
-            renderHomeProducts();
-            renderCategoryItems();
-            renderCategoryStrip();
-            renderProducts();
-            updateCategoryPage("");
-
-        }
+            goToHomeStore();
+        },
+        false
     );
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    setBottomNavigationActive(
+        storeSection && !storeSection.hidden
+            ? "store"
+            : ""
+    );
+});
 
 /* ============================================================
    CLIQUE FORA DO MENU MOBILE
