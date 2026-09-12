@@ -10752,11 +10752,15 @@ function renderFooter(data) {
             <div class="container">
 
                 ${
-                    legais.cnpj
-                        ? `<div>${escapeHtml(legais.cnpj)}</div>`
-                        : ""
-                }
-
+    legais.cnpj
+        ? `
+            <div class="shop-footer-cnpj">
+                <strong>CNPJ:</strong>
+                ${escapeHtml(legais.cnpj)}
+            </div>
+          `
+        : ""
+}
                 ${
                     legais.razaoSocial
                         ? `<div>${escapeHtml(legais.razaoSocial)}</div>`
